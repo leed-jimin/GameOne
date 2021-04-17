@@ -1,13 +1,18 @@
+extends Timer
+
 class_name AnimationHandler
 
 var anim
-var lightAttkPoints = 2
-var heavyAttkPoints = 1
-var lightAttkArr = ["lJab", "rJab"]
+var timer
+var lightAttkPoints = 0
+var heavyAttkPoints = 0
+var lightAttkArr = ["lJab", "rJab"] #will be loaded from details later
 var heavyAttkArr = ["lFrontKick"]
 
 func _init(anim):
 	self.anim = anim
+	timer = Timer.new()
+	timer.wait_time = 1
 	anim.play("Idle")
 
 func _ready():
@@ -33,13 +38,19 @@ func handle_movement_animation(kinBody, just_jumped, grounded, move_vec, charSta
 	
 func handle_attack_animation(type):
 	if type == "light_attack":
-		lightAttkPoints = get_next_attack("light", lightAttkPoints)
+		lightAttkPoints = lightAttkPoints % (lightAttkArr.count)
+		if lightAttkPoints == 0:
+			pass
+		timer.start()
+		play_anim(lightAttkArr[lightAttkPoints])
+		lightAttkPoints = lightAttkPoints + 1
 	elif type == "heavy_attack":
-		heavyAttkPoints = get_next_attack("heavy", heavyAttkPoints)
-		
-func get_next_attack(type, points):
-	match points:
-		3:
+		heavyAttkPoints = heavyAttkPoints % (heavyAttkArr.count)
+		if heavyAttkPoints == 0:
+			pass
+		timer.start()
+		play_anim(heavyAttkArr[heavyAttkPoints])
+		heavyAttkPoints = heavyAttkPoints + 1
 	
 func handle_specials_animation():
 	pass
