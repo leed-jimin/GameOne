@@ -7,17 +7,17 @@ var AnimHandler = load("res://scripts/character/AnimationHandler.gd")
 onready var animationHandler = AnimHandler.new($AnimationPlayer)
 
 const MOVE_SPEED = 8
-const JUMP_FORCE = 30
+const JUMP_FORCE = 50
 const GRAVITY = 1.3
-const MAX_FALL_SPEED = 30
+const MAX_FALL_SPEED = 40
 
 const characterState = {
-	IDLE = 0,
-	AIRBOURNE = 1,
-	ATTACKING = 2
+	"IDLE": 0,
+	"AIRBOURNE": 1,
+	"ATTACKING": 2
 }
 
-var currCharState = characterState.IDLE
+var currCharState = characterState["IDLE"]
 var y_velo = 0
 
 onready var characterModel = $characterModel
@@ -40,24 +40,41 @@ func _physics_process(_delta):
 		move_vec.z += 1
 	#Standard Attacks
 	if Input.is_action_just_pressed("light_attack"):
-		animationHandler.handle_attack_animation("light")
+		animationHandler.handle_attack_animation("light_attack")
 	if Input.is_action_just_pressed("heavy_attack"):
-		animationHandler.handle_attack_animation("heavy")
+		animationHandler.handle_attack_animation("heavy_attack")
 	
 	move_and_slide_wrapper(move_vec)
 	
+	#jumping logic
 	var grounded = is_on_floor()
+	y_velo -= GRAVITY
 	var just_jumped = false
-	#jump handling
-	if grounded:
-		if Input.is_action_just_pressed("jump"):
-			just_jumped = true
-			y_velo = JUMP_FORCE
-	else:
-		y_velo -= GRAVITY
+	if grounded and Input.is_action_just_pressed("jump"):
+		just_jumped = true
+		y_velo = JUMP_FORCE
+	if y_velo < -MAX_FALL_SPEED:
+		y_velo = -MAX_FALL_SPEED
+ 
+	if just_jumped:
+		animationHandler.play_anim("JumpUp", false)
+		currCharState = characterState["AIRBOURNE"];
+	elif grounded and int(currCharState) == characterState["AIRBOURNE"]:
+		currCharState = characterState["IDLE"];
+		animationHandler.play_anim("FallDown", true)
+	elif grounded:
+		currCharState = characterState["IDLE"];
+		if move_vec.x == 0 and move_vec.z == 0:
+			animationHandler.play_anim("Idle", false)
+		else:
+			animationHandler.play_anim("Walking", false)
 		
-	animationHandler.handle_movement_animation(self, just_jumped, grounded, move_vec, currCharState, characterState)
-
+	#currCharState = animationHandler.handle_aerial_movement_animation(just_jumped, grounded, move_vec, currCharState, characterState)
+	#end jumping logic
+	
+func handle_aerial_movement():
+	pass
+	
 func move_and_slide_wrapper(move_vec):
 	move_vec = move_vec.normalized()
 	move_vec = move_vec.rotated(Vector3(0, 1, 0), rotation.y)
