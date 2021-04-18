@@ -45,25 +45,26 @@ func _physics_process(_delta):
 		animationHandler.handle_attack_animation("heavy_attack")
 	
 	move_and_slide_wrapper(move_vec)
-	
+	var airbourne = false
 	#jumping logic
 	var grounded = is_on_floor()
 	y_velo -= GRAVITY
 	var just_jumped = false
-	if grounded and Input.is_action_just_pressed("jump"):
-		just_jumped = true
-		y_velo = JUMP_FORCE
-	if y_velo < -MAX_FALL_SPEED:
-		y_velo = -MAX_FALL_SPEED
- 
+	if grounded:
+		if Input.is_action_just_pressed("jump"):
+			just_jumped = true
+			y_velo = JUMP_FORCE
+	else:
+		y_velo -= GRAVITY
+		
 	if just_jumped:
 		animationHandler.play_anim("JumpUp", false)
-		currCharState = characterState["AIRBOURNE"];
-	elif grounded and int(currCharState) == characterState["AIRBOURNE"]:
-		currCharState = characterState["IDLE"];
-		animationHandler.play_anim("FallDown", true)
+		airbourne = true
+	elif airbourne and is_on_floor():
+		animationHandler.play_anim("FallDown")
+		yield($AnimationPlayer, "animation_finished")
+		airbourne = false
 	elif grounded:
-		currCharState = characterState["IDLE"];
 		if move_vec.x == 0 and move_vec.z == 0:
 			animationHandler.play_anim("Idle", false)
 		else:

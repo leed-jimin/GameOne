@@ -48,6 +48,6 @@ func play_anim(name, toYield):
 	if anim.current_animation != null and anim.current_animation == name:
 		return
 	anim.play(name)
-	if toYield:
+	if false:
 		print("yeirld")
 		yield(anim, "animation_finished")
