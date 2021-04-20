@@ -1,84 +1,94 @@
 extends KinematicBody
 
-var PlayerDetails = load("res://scripts/character/PlayerDetails.gd") # Relative path
-onready var playerDetails = PlayerDetails.new()
+var Player_Details = load("res://scripts/character/PlayerDetails.gd") # Relative path
+onready var playerDetails = Player_Details.new()
 
 var AnimHandler = load("res://scripts/character/AnimationHandler.gd")
-onready var animationHandler = AnimHandler.new($AnimationPlayer)
+onready var animationHandler = AnimHandler.new($AnimationPlayer, $AnimationTree, playerDetails, $Timer)
 
-const MOVE_SPEED = 8
-const JUMP_FORCE = 50
+const SPEED_WALK = 15
+const SPEED_RUN = 30
+const JUMP_FORCE = 60
 const GRAVITY = 1.3
-const MAX_FALL_SPEED = 40
+#const SPEED_MAX_FALL = 40
 
-const characterState = {
-	"IDLE": 0,
-	"AIRBOURNE": 1,
-	"ATTACKING": 2
-}
-
-var currCharState = characterState["IDLE"]
-var y_velo = 0
+var yVelo = 0
+var airbourne = false
+var charStates
 
 onready var characterModel = $characterModel
 
 func _ready():
+	charStates = playerDetails.get_characterStates()
 	pass
 	#Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _physics_process(_delta):
-	var move_vec = Vector3()
+	var moveVec = Vector3()
 	#Directional movement
 	if Input.is_action_pressed("ui_left"):
-		move_vec.x -= 1
-		#rotate_y(deg2rad(90))
+		if Input.is_action_pressed("ui_up"):
+			rotation_degrees = Vector3(0, -135, 0)
+		elif Input.is_action_pressed("ui_down"):
+			rotation_degrees = Vector3(0, -45, 0)
+		else:
+			rotation_degrees = Vector3(0, -90, 0)
+		moveVec.z += 1
 	elif Input.is_action_pressed("ui_right"):
-		move_vec.x += 1
-	if Input.is_action_pressed("ui_up"):
-		move_vec.z -= 1
+		if Input.is_action_pressed("ui_up"):
+			rotation_degrees = Vector3(0, 135, 0)
+		elif Input.is_action_pressed("ui_down"):
+			rotation_degrees = Vector3(0, 45, 0)
+		else:
+			rotation_degrees = Vector3(0, 90, 0)
+		moveVec.z += 1
+	elif Input.is_action_pressed("ui_up"):
+		rotation_degrees = Vector3(0, 180, 0)
+		moveVec.z += 1
 	elif Input.is_action_pressed("ui_down"):
-		move_vec.z += 1
+		rotation_degrees = Vector3(0, 0, 0)
+		moveVec.z += 1
+	#Directional movement End
+	
+	#Jumping logic
+	var grounded = is_on_floor()
+	var just_jumped = false
+	
+	if grounded:
+		if Input.is_action_just_pressed("jump"):
+			just_jumped = true
+			yVelo = JUMP_FORCE
+	else:
+		playerDetails.set_currCharState(charStates["AIRBOURNE"])
+		yVelo -= GRAVITY
+		
+	#print(playerDetails.get_currCharState())
+	if playerDetails.get_currCharState() != charStates["ACTION"]:
+		move_and_slide_wrapper(moveVec)
+		animationHandler.handle_aerial_movement_animation(just_jumped, grounded, moveVec)
+	#Jumping logic End
+	
 	#Standard Attacks
 	if Input.is_action_just_pressed("light_attack"):
 		animationHandler.handle_attack_animation("light_attack")
 	if Input.is_action_just_pressed("heavy_attack"):
 		animationHandler.handle_attack_animation("heavy_attack")
+	#Standard Attacks End
 	
-	move_and_slide_wrapper(move_vec)
-	var airbourne = false
-	#jumping logic
-	var grounded = is_on_floor()
-	y_velo -= GRAVITY
-	var just_jumped = false
-	if grounded:
-		if Input.is_action_just_pressed("jump"):
-			just_jumped = true
-			y_velo = JUMP_FORCE
-	else:
-		y_velo -= GRAVITY
-		
-	if just_jumped:
-		animationHandler.play_anim("JumpUp", false)
-		airbourne = true
-	elif airbourne and is_on_floor():
-		animationHandler.play_anim("FallDown")
-		yield($AnimationPlayer, "animation_finished")
-		airbourne = false
-	elif grounded:
-		if move_vec.x == 0 and move_vec.z == 0:
-			animationHandler.play_anim("Idle", false)
-		else:
-			animationHandler.play_anim("Walking", false)
-		
-	#currCharState = animationHandler.handle_aerial_movement_animation(just_jumped, grounded, move_vec, currCharState, characterState)
-	#end jumping logic
-	
-func handle_aerial_movement():
-	pass
-	
-func move_and_slide_wrapper(move_vec):
-	move_vec = move_vec.normalized()
-	move_vec = move_vec.rotated(Vector3(0, 1, 0), rotation.y)
-	move_vec *= MOVE_SPEED
-	move_vec.y = y_velo
-	move_and_slide(move_vec, Vector3(0, 1, 0))
+func move_and_slide_wrapper(moveVec):
+	var currSpeed = SPEED_WALK
+	if playerDetails.get_currCharState() == charStates["AIRBOURNE"]:
+		currSpeed = SPEED_WALK / 2
+	moveVec = moveVec.normalized()
+	moveVec = moveVec.rotated(Vector3(0, 1, 0), rotation.y)
+	moveVec *= currSpeed
+	moveVec.y = yVelo
+	move_and_slide(moveVec, Vector3(0, 1, 0))
+
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+	animationHandler.set_to_idle()
+
+
+func _on_Timer_timeout():
+	animationHandler.timer_timeout() # Replace with function body.

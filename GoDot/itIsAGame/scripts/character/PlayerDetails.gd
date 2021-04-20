@@ -1,9 +1,38 @@
+const States = preload("res://scripts/character/States.gd") # Relative path
+
 class_name PlayerDetails
 
+const geoStates = {
+	"GROUND": 0,
+	"AIR": 1,
+}
+
+const actionStates = {
+	"NONE": 0,
+	"BUSY": 1,
+}
+
+const hurtStates = {
+	"NONE": 0,
+	"LIGHT": 1,
+	"HEAVY": 2,
+	"DEAD": 3
+}
+
+var geoState
+var actionState
+var hurtState
 
 func _init():
-	pass
+	geoState = States.new(geoStates, "GROUND")
+	actionState = States.new(actionStates, "NONE")
+	hurtState = States.new(hurtStates, "NONE")
 
+func set_states_defaults():
+	geoState.set_defaults()
+	actionState.set_defaults()
+	hurtState.set_defaults()
+	
 func get_attack_patterns():
 	pass
 	
