@@ -12,17 +12,17 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "AnimationHandler",
 "language": "GDScript",
-"path": "res://scripts/character/AnimationHandler.gd"
+"path": "res://characterAssets/scripts/character/AnimationHandler.gd"
 }, {
 "base": "Reference",
 "class": "PlayerDetails",
 "language": "GDScript",
-"path": "res://scripts/character/PlayerDetails.gd"
+"path": "res://characterAssets/scripts/character/PlayerDetails.gd"
 }, {
 "base": "Reference",
 "class": "States",
 "language": "GDScript",
-"path": "res://scripts/character/States.gd"
+"path": "res://characterAssets/scripts/character/States.gd"
 } ]
 _global_script_class_icons={
 "AnimationHandler": "",
@@ -33,8 +33,12 @@ _global_script_class_icons={
 [application]
 
 config/name="GameOne"
-run/main_scene="res://Level.tscn"
+run/main_scene="res://Maps/Level.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+Server="*res://Main/Server.gd"
 
 [display]
 
@@ -74,4 +78,4 @@ limits/message_queue/max_size_kb=4096
 
 [rendering]
 
-environment/default_environment="res://default_env.tres"
+environment/default_environment="res://Maps/default_env.tres"
