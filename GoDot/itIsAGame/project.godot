@@ -33,12 +33,13 @@ _global_script_class_icons={
 [application]
 
 config/name="GameOne"
-run/main_scene="res://Maps/Level.tscn"
+run/main_scene="res://Main/SceneHandler.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
-Server="*res://Main/Server.gd"
+Server="*res://Main/singletons/Server.gd"
+Gateway="*res://Main/singletons/Gateway.gd"
 
 [display]
 
@@ -72,10 +73,6 @@ heavy_attack={
  ]
 }
 
-[memory]
-
-limits/message_queue/max_size_kb=4096
-
 [rendering]
 
-environment/default_environment="res://Maps/default_env.tres"
+environment/default_environment="res://Main/default_env.tres"

@@ -10,6 +10,7 @@ const geoStates = {
 const actionStates = {
 	"NONE": 0,
 	"BUSY": 1,
+	"ATTACKING": 2
 }
 
 const hurtStates = {

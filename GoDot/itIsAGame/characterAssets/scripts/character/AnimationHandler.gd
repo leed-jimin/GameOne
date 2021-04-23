@@ -46,7 +46,6 @@ func handle_aerial_movement_animation(just_jumped, grounded, moveVec):
 		playerDetails.geoState.set_currState("GROUND")
 		tree.set("parameters/state/current", 0)
 		if moveVec.x == 0 and moveVec.z == 0:
-			print("walk")
 			tree.set("parameters/Ground_Move/current", 3)
 		else:
 			tree.set("parameters/Ground_Move/current", 1)
@@ -56,12 +55,13 @@ func handle_attack_animation(type):
 	tree.active = false
 	if type == "light_attack":
 		if playerDetails.geoState.get_currState() == playerDetails.geoState.get_states()["AIR"]:
+			timer.start()
 			play_anim(lightAirArr[0])
 		else:
 			lightAttkPoints = lightAttkPoints % (lightAttkArr.size())
 			timer.wait_time = lightWaitTime
 			timer.start()
-			if lightAttkPoints != lightAttkArr.size():
+			if lightAttkPoints != lightAttkArr.size() && anim.get_queue().size() == 0:
 				anim.queue(lightAttkArr[lightAttkPoints])
 			lightAttkPoints = lightAttkPoints + 1
 	elif type == "heavy_attack":
@@ -71,11 +71,10 @@ func handle_attack_animation(type):
 			heavyAttkPoints = heavyAttkPoints % (heavyAttkArr.size())
 			timer.wait_time = heavyWaitTime
 			timer.start()
-			if heavyAttkPoints != heavyAttkArr.size():
+			if heavyAttkPoints != heavyAttkArr.size() && anim.get_queue().size() == 0:
 				anim.queue(heavyAttkArr[heavyAttkPoints])
 			heavyAttkPoints = heavyAttkPoints + 1
 	
-	#playerDetails.set_currCharState(charStates["IDLE"])
 	
 func handle_block_animation():
 	pass
@@ -88,6 +87,10 @@ func handle_knockback_animation():
 	pass
 
 func timer_timeout():
+	playerDetails.actionState.set_currState("NONE")
+	tree.set("parameters/state/current", 0)
+	tree.set("parameters/Ground_Move/current", 3)
+	tree.active = true
 	lightAttkPoints = 0
 	heavyAttkPoints = 0
 	timer.stop()
