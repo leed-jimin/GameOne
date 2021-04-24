@@ -1,5 +1,8 @@
 extends Node
 
+onready var playerVerificationProcess = get_node("PlayerVerification")
+onready var combatFunctions = get_node("Combat")
+
 var network = NetworkedMultiplayerENet.new()
 var port = 1909
 const MAX_PLAYERS = 108
@@ -19,6 +22,14 @@ func start_server():
 
 func _peer_connected(playerId):
 	print("connected Id: " + String(playerId))
+	playerVerificationProcess.start(playerId)
+	
 	
 func _peer_disconnected(playerId):
 	print("disconnected Id: " + String(playerId))
+	get_node(str(playerId)).queue_free()
+
+remote func fetch_player_inventory():
+	var playerId = get_tree().get_rpc_sender_id()
+	var playerInventory = get_node(str(playerId)).playerInventory
+	rpc_id(playerId, "return_player_inventory", playerInventory)

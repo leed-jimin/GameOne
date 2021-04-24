@@ -1,10 +1,10 @@
 extends KinematicBody
 
-var Player_Details = load("res://characterAssets/scripts/character/PlayerDetails.gd") # Relative path
-onready var playerDetails = Player_Details.new()
+var Character_Details = load("res://characterAssets/scripts/character/CharacterDetails.gd") # Relative path
+onready var characterDetails = Character_Details.new()
 
 var AnimHandler = load("res://characterAssets/scripts/character/AnimationHandler.gd")
-onready var animationHandler = AnimHandler.new($AnimationPlayer, $AnimationTree, playerDetails, $Timer)
+onready var animationHandler = AnimHandler.new($AnimationPlayer, $AnimationTree, characterDetails, $Timer)
 
 const SPEED_WALK = 15
 const SPEED_RUN = 30
@@ -24,7 +24,7 @@ func _ready():
 func _physics_process(_delta):
 	var moveVec = Vector3()
 	#Directional movement
-	if playerDetails.actionState.get_currState() == 0:
+	if characterDetails.actionState.get_currState() == 0:
 		if Input.is_action_pressed("ui_left"):
 			if Input.is_action_pressed("ui_up"):
 				rotation_degrees = Vector3(0, -135, 0)
@@ -54,15 +54,15 @@ func _physics_process(_delta):
 	var just_jumped = false
 		
 	if grounded:
-		if Input.is_action_just_pressed("jump") && playerDetails.actionState.get_currState() == 0:
+		if Input.is_action_just_pressed("jump") && characterDetails.actionState.get_currState() == 0:
 			just_jumped = true
 			yVelo = JUMP_FORCE
 	else:
-		playerDetails.geoState.set_currState("AIR")
+		characterDetails.geoState.set_currState("AIR")
 		yVelo -= GRAVITY
 		
 	#print(playerDetails.get_currCharState())
-	if playerDetails.actionState.get_currState() == playerDetails.actionState.get_states()["NONE"] || playerDetails.geoState.get_currState() == playerDetails.geoState.get_states()["AIR"]:
+	if characterDetails.actionState.get_currState() == characterDetails.actionState.get_states()["NONE"] || characterDetails.geoState.get_currState() == characterDetails.geoState.get_states()["AIR"]:
 		move_and_slide_wrapper(moveVec)
 		animationHandler.handle_aerial_movement_animation(just_jumped, grounded, moveVec)
 	#Jumping logic End
@@ -76,7 +76,7 @@ func _physics_process(_delta):
 	
 func move_and_slide_wrapper(moveVec):
 	var currSpeed = SPEED_WALK
-	if playerDetails.geoState.get_currState() == playerDetails.geoState.get_states()["AIR"]:
+	if characterDetails.geoState.get_currState() == characterDetails.geoState.get_states()["AIR"]:
 		currSpeed = SPEED_WALK / 2
 	moveVec = moveVec.normalized()
 	moveVec = moveVec.rotated(Vector3(0, 1, 0), rotation.y)

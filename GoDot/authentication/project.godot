@@ -17,6 +17,7 @@ config/icon="res://icon.png"
 [autoload]
 
 PlayerData="*res://singletons/PlayerData.gd"
+GameServers="*res://singletons/GameServers.gd"
 
 [physics]
 

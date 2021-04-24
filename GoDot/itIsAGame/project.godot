@@ -17,7 +17,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "PlayerDetails",
 "language": "GDScript",
-"path": "res://characterAssets/scripts/character/PlayerDetails.gd"
+"path": "res://characterAssets/scripts/character/CharacterDetails.gd"
 }, {
 "base": "Reference",
 "class": "States",
@@ -33,13 +33,14 @@ _global_script_class_icons={
 [application]
 
 config/name="GameOne"
-run/main_scene="res://Main/SceneHandler.tscn"
+run/main_scene="res://main/SceneHandler.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
-Server="*res://Main/singletons/Server.gd"
-Gateway="*res://Main/singletons/Gateway.gd"
+Server="*res://main/singletons/Server.gd"
+Gateway="*res://main/singletons/Gateway.gd"
+GameData="*res://main/singletons/GameData.gd"
 
 [display]
 
@@ -75,4 +76,4 @@ heavy_attack={
 
 [rendering]
 
-environment/default_environment="res://Main/default_env.tres"
+environment/default_environment="res://main/default_env.tres"

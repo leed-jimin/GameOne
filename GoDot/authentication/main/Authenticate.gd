@@ -27,6 +27,8 @@ remote func authenticate_player(username, password, playerId):
 	print("auth request received")
 	var gatewayId = get_tree().get_rpc_sender_id()
 	var result
+	var token
+	
 	print("Starting authentication")
 	if not PlayerData.PlayerIDs.has(username):
 		print("User not recognized")
@@ -37,5 +39,17 @@ remote func authenticate_player(username, password, playerId):
 	else:
 		print("Successful Authentication")
 		result = true
-	print("authentication result send to gateway server")
+		
+		randomize()
+		var randomNumber = randi()
+		print(randomNumber)
+		var hashed = str(randomNumber).sha256_text()
+		print(hashed)
+		var timestamp = str(OS.get_unix_time())
+		print(timestamp)
+		token = hashed + timestamp
+		print(token)
+		var gameServer = "Server" #have to load balance in the future
+		GameServers.distribute_login_token(token, gameServer)
+
 	rpc_id(gatewayId, "authentication_results", result, playerId)

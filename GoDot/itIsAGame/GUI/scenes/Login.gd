@@ -12,9 +12,7 @@ func _on_LoginButton_pressed():
 		#stop with popup
 		print("invalid username or pw")
 	else:
-		#TESTING THIS NOW
-		get_node("LoginScreen/NinePatchRect/VBoxContainer").LoginButton.disabled = false
-		loginButton.disabled = true
+		get_node("NinePatchRect/VBoxContainer/LoginButton").disabled = true
 		var username = usernameInput.get_text()
 		var password = passwordInput.get_text()
 		print("trying to login")

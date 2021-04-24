@@ -14,6 +14,11 @@ config/name="Server"
 run/main_scene="res://main/scenes/Server.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+ServerData="*res://main/instances/ServerData.gd"
+HubConnection="*res://main/instances/HubConnection.gd"
+
 [physics]
 
 common/physics_fps=20

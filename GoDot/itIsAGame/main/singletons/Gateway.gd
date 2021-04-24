@@ -34,11 +34,12 @@ func connect_to_server(_username, _password):
 
 func _on_connection_succeeded():
 	print("connection success")
+	get_node("/root/SceneHandler/LoginScreen").queue_free()
 	request_login()
 	
 func _on_connection_failed():
 	print("connection fail")
-	get_node("LoginScreen/NinePatchRect/VBoxContainer").LoginButton.disabled = false
+	get_node("LoginScreen/NinePatchRect/VBoxContainer/LoginButton").disabled = false
 
 func request_login():
 	print("Request to connect to gateway")
@@ -53,7 +54,7 @@ remote func return_login_request(results):
 		#remove gui for login
 	else:
 		print("Please provide correct username and password")
-		get_node("LoginScreen/NinePatchRect/VBoxContainer").LoginButton.disabled = false
+		get_node("LoginScreen/NinePatchRect/VBoxContainer/LoginButton").disabled = false
 		#any other handling
 	network.disconnect("connection_succeeded", self, "_on_connection_succeeded")
 	network.disconnect("connection_failed", self, "_on_connection_failed")
