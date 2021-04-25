@@ -18,7 +18,7 @@ func _process(delta):
 	
 func start_server():
 	network.create_server(port, MAX_PLAYERS)
-	set_custom_multiplayer(network)
+	set_custom_multiplayer(gatewayApi)
 	custom_multiplayer.set_root_node(self)
 	custom_multiplayer.set_network_peer(network)
 	print("GameServerHub started")
@@ -33,3 +33,7 @@ func _peer_connected(gameServerId):
 	
 func _peer_disconnected(gameServerId):
 	print("gameServer disconnected: " + str(gameServerId))
+
+func distribute_login_token(token, gameServer):
+	var gameServerPeerId = gameServerList[gameServer]
+	rpc_id(gameServerPeerId, "receive_login_token", token)

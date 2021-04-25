@@ -27,6 +27,6 @@ func authenticate_player(username, password, playerId):
 	print("sending out auth request")
 	rpc_id(1, "authenticate_player", username, password, playerId)
 	
-remote func authentication_results(result, playerId):
+remote func authentication_results(result, playerId, token):
 	print("results received and replying to player login request")
-	Gateway.return_login_request(result, playerId)
+	Gateway.return_login_request(result, playerId, token)
