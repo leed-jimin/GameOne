@@ -32,7 +32,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="GameOne"
+config/name="Client-GameOne"
 run/main_scene="res://main/SceneHandler.tscn"
 config/icon="res://icon.png"
 
