@@ -21,18 +21,18 @@ func start_server():
 	set_custom_multiplayer(gatewayApi)
 	custom_multiplayer.set_root_node(self)
 	custom_multiplayer.set_network_peer(network)
-	print("GameServerHub started")
+	print("AU:GameServerHub started")
 	
 	network.connect("peer_connected", self, "_peer_connected")
 	network.connect("peer_disconnected", self, "_peer_disconnected")
 	
 func _peer_connected(gameServerId):
-	print("gameServer connected: " + str(gameServerId))
+	print("AU:gameServer connected: " + str(gameServerId))
 	gameServerList["GameServer1"] = gameServerId
 	print(gameServerList)
 	
 func _peer_disconnected(gameServerId):
-	print("gameServer disconnected: " + str(gameServerId))
+	print("AU:gameServer disconnected: " + str(gameServerId))
 
 func distribute_login_token(token, gameServer):
 	var gameServerPeerId = gameServerList[gameServer]

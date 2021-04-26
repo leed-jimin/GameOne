@@ -2,7 +2,7 @@
 
 [ext_resource path="res://characterAssets/models/characterModel.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Maps/scenes/underground_arena.tscn" type="PackedScene" id=2]
-[ext_resource path="res://GUI/scenes/LoginScreen.tscn" type="PackedScene" id=3]
+[ext_resource path="res://GUI/scenes/MainScreen.tscn" type="PackedScene" id=3]
 [ext_resource path="res://main/SceneHandler.gd" type="Script" id=4]
 
 [node name="SceneHandler" type="Node"]
