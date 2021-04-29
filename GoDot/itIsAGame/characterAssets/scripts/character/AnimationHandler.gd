@@ -1,8 +1,7 @@
 class_name AnimationHandler
 
 var anim
-var tree
-var playerDetails
+var charDet
 var timer
 
 #these will be loaded from playerdetails
@@ -15,17 +14,14 @@ var heavyWaitTime = 1
 var lightAttkArr = ["lJab", "rJab", "r_l_f_straightPunch"] #will be loaded from details later
 var heavyAttkArr = ["lFrontKick"]
 var lightAirArr = ["r_l_aerialElbow"] #will be loaded from details later
-var heavyAirkArr = []
+var heavyAirArr = []
 #these will be loaded from playerdetails
 
 
-func _init(animPlayer, animTree, playerDet, timerNode):
-	playerDetails = playerDet
-	tree = animTree
+func _init(animPlayer, characterDetails, timerNode):
+	charDet = characterDetails
 	anim = animPlayer
 	timer = timerNode
-	tree.active = true
-	tree.set("parameters/Ground_Move/current", 3)
 
 func _ready():
 	anim.get_animation("Walking").set_loop(true)
@@ -34,48 +30,56 @@ func _ready():
 
 func handle_aerial_movement_animation(just_jumped, grounded, moveVec):
 	if just_jumped:
-		tree.set("parameters/Air_Move/current", 0)
-		tree.set("parameters/state/current", 1)
-		playerDetails.geoState.set_currState("AIR")
-	elif tree.get("parameters/state/current") == 1 and grounded:
-		tree.active = false
-		tree.set("parameters/state/current", 0)
-		play_anim("FallDown")
+		play_anim("JumpUp")
+		charDet.geoState.set_currState("AIR")
+		return
+	elif charDet.geoState.get_currState() == 1 and charDet.actionState.get_currState() == 0 and grounded:
+		#TODO fix this i think
+		print("fall")
+		charDet.geoState.set_currState("GROUND")
+		handle_ground_animation()
 	elif grounded:
-		tree.active = true
-		playerDetails.geoState.set_currState("GROUND")
-		tree.set("parameters/state/current", 0)
+		charDet.geoState.set_currState("GROUND")
 		if moveVec.x == 0 and moveVec.z == 0:
-			tree.set("parameters/Ground_Move/current", 3)
+			play_anim("Idle")
 		else:
-			tree.set("parameters/Ground_Move/current", 1)
+			play_anim("Walking")
 	
 func handle_attack_animation(type):
-	playerDetails.actionState.set_currState("BUSY")
-	tree.active = false
+	charDet.actionState.set_currState("ATTACKING")
 	if type == "light_attack":
-		if playerDetails.geoState.get_currState() == playerDetails.geoState.get_states()["AIR"]:
+		if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
 			timer.start()
 			play_anim(lightAirArr[0])
 		else:
 			lightAttkPoints = lightAttkPoints % (lightAttkArr.size())
 			timer.wait_time = lightWaitTime
 			timer.start()
-			if lightAttkPoints != lightAttkArr.size() && anim.get_queue().size() == 0:
+			if lightAttkPoints == 0:
+				play_anim(lightAttkArr[lightAttkPoints])
+			elif lightAttkPoints != lightAttkArr.size() && anim.get_queue().size() == 0:
 				anim.queue(lightAttkArr[lightAttkPoints])
 			lightAttkPoints = lightAttkPoints + 1
 	elif type == "heavy_attack":
-		if playerDetails.geoState.get_currState() == playerDetails.geoState.get_states()["AIR"]:
+		if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
 			pass
 		else:
 			heavyAttkPoints = heavyAttkPoints % (heavyAttkArr.size())
 			timer.wait_time = heavyWaitTime
 			timer.start()
-			if heavyAttkPoints != heavyAttkArr.size() && anim.get_queue().size() == 0:
+			if heavyAttkPoints == 0:
+				play_anim(heavyAttkArr[heavyAttkPoints])
+			elif heavyAttkPoints != heavyAttkArr.size() && anim.get_queue().size() == 0:
 				anim.queue(heavyAttkArr[heavyAttkPoints])
 			heavyAttkPoints = heavyAttkPoints + 1
-	
-	
+
+func handle_ground_animation():
+	if charDet.actionState.get_currState() == 0:
+		charDet.actionState.set_currState("BUSY")
+		timer.wait_time = .4
+		timer.start()
+		play_anim("FallDown")
+
 func handle_block_animation():
 	pass
 	
@@ -87,10 +91,7 @@ func handle_knockback_animation():
 	pass
 
 func timer_timeout():
-	playerDetails.actionState.set_currState("NONE")
-	tree.set("parameters/state/current", 0)
-	tree.set("parameters/Ground_Move/current", 3)
-	tree.active = true
+	set_to_idle()
 	lightAttkPoints = 0
 	heavyAttkPoints = 0
 	timer.stop()
@@ -101,10 +102,9 @@ func play_anim(name):
 	anim.play(name)
 	
 func set_to_idle():
-	print("here")
-	tree.set("parameters/state/current", 0)
-	tree.set("parameters/Ground_Move/current", 3)
-	tree.active = true
-	playerDetails.actionState.set_currState("NONE")
-	playerDetails.geoState.set_currState("GROUND")
+	if charDet.geoState.get_currState() == 0: #ground
+		play_anim("Idle")
+	elif charDet.geoState.get_currState() == 1:
+		play_anim("JumpUp")
+	charDet.actionState.set_currState("NONE")
 	

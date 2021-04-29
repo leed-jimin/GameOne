@@ -1,6 +1,6 @@
 var States = load("res://characterAssets/scripts/character/States.gd") # Relative path
 
-class_name PlayerDetails
+class_name CharacterDetails
 
 
 const geoStates = {
