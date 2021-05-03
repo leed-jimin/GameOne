@@ -10,6 +10,7 @@ func _ready():
 	
 func player_verified():
 	var model = characterModel.instance()
+	model.transform.origin = Vector3(20, 20, 0)
 	add_child(model)
 	
 	
@@ -20,24 +21,26 @@ func spawn_new_player(playerId, spawnPosition):
 	else:
 		if not get_node("YSort/OtherPlayers").has_node(str(playerId)): 
 			var newPlayer = characterTemplate.instance()
-			newPlayer.global_transform.origin = spawnPosition # might not work
+			newPlayer.transform.origin = spawnPosition # might not work
 			newPlayer.name = str(playerId)
 			get_node("YSort/OtherPlayers").add_child(newPlayer)
 		
 func despawn_player(playerId):
-	get_node(str(playerId)).queue_free()
+	get_node("YSort/OtherPlayers/" + str(playerId)).queue_free()
 
 func update_world_state(worldState):
 	#Buffer
 	#Interpolation
 	#Extrapolation
 	#rubber banding
-	if worldState["T"] < lastWorldState:
+	if worldState["T"] > lastWorldState:
 		lastWorldState = worldState["T"]
 		worldState.erase("T")
 		worldState.erase(get_tree().get_network_unique_id())
 		for player in worldState.keys():
+			print(player)
 			if get_node("YSort/OtherPlayers").has_node(str(player)):
+				print("yes")
 				get_node("YSort/OtherPlayers/" + str(player)).move_player(worldState[player]["P"])
 			else:
 				print("spawning player")

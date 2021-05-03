@@ -2,4 +2,5 @@ extends KinematicBody
 
 
 func move_player(newPosition):
-	global_transform.origin = newPosition
+	print(newPosition)
+	transform.origin = newPosition

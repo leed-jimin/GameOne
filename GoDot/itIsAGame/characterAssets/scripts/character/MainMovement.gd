@@ -97,8 +97,8 @@ func move_and_slide_wrapper(moveVec):
 	move_and_slide(moveVec, Vector3(0, 1, 0))
 
 func define_player_state():
-	playerState = {"T": OS.get_system_time_msecs(), "P": global_transform.origin}
-	#Server.send_player_state(playerState)
+	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin}
+	Server.send_player_state(playerState)
 
 func _on_AnimationPlayer_animation_finished():
 	animationHandler.set_to_idle()

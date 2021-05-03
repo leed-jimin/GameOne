@@ -45,7 +45,6 @@ func _on_TokenExpiration_timeout():
 	print(expectedTokens)
 	
 func fetch_token(playerId):
-	print("fetching")
 	rpc_id(playerId, "fetch_token")
 	
 remote func return_token(token):
@@ -55,9 +54,9 @@ remote func return_token(token):
 func return_token_verification_results(playerId, result):
 	rpc_id(playerId, "return_token_verification_results", result)
 	if result == true:
-		rpc_id(0, "spawn_new_player", playerId, Vector3(0, 100, 0))
+		rpc_id(0, "spawn_new_player", playerId, Vector3(0, 20, 0))
 		
-func receive_player_state(playerState):
+remote func receive_player_state(playerState):
 	var playerId = get_tree().get_rpc_sender_id()
 	if playerStateCollection.has(playerId):
 		if playerStateCollection[playerId]["T"] < playerState["T"]:
