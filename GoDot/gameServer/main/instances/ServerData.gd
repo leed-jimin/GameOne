@@ -15,9 +15,9 @@ var testData = {
 	}
 }
 
-func _ready():
-	var skillDataFile = File.new()
-	skillDataFile.open("res://Data/test.json", File.READ)
-	var json = JSON.parse(skillDataFile.get_as_text())
-	skillDataFile.close()
-	skillData = json.result
+#func _ready():
+#	var skillDataFile = File.new()
+#	skillDataFile.open("res://Data/test.json", File.READ)
+#	var json = JSON.parse(skillDataFile.get_as_text())
+#	skillDataFile.close()
+#	skillData = json.result

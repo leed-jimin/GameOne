@@ -29,17 +29,16 @@ func _ready():
 	anim.get_animation("Running").set_loop(true)
 
 func handle_aerial_movement_animation(just_jumped, grounded, moveVec):
-	if just_jumped:
+	if charDet.geoState.get_currState() == 1:
 		play_anim("JumpUp")
-		charDet.geoState.set_currState("AIR")
+		#charDet.geoState.set_currState("AIR")
 		return
 	elif charDet.geoState.get_currState() == 1 and charDet.actionState.get_currState() == 0 and grounded:
 		#TODO fix this i think
-		print("fall")
-		charDet.geoState.set_currState("GROUND")
+		#charDet.geoState.set_currState("GROUND")
 		handle_ground_animation()
 	elif grounded:
-		charDet.geoState.set_currState("GROUND")
+		#charDet.geoState.set_currState("GROUND")
 		if moveVec.x == 0 and moveVec.z == 0:
 			play_anim("Idle")
 		else:
@@ -47,6 +46,7 @@ func handle_aerial_movement_animation(just_jumped, grounded, moveVec):
 	
 func handle_attack_animation(type):
 	charDet.actionState.set_currState("ATTACKING")
+	print(charDet.geoState.get_currState())
 	if type == "light_attack":
 		if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
 			timer.start()

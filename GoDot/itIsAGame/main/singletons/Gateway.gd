@@ -59,9 +59,7 @@ remote func return_login_request(results, token):
 	print("results received")
 	if results == true:
 		Server.token = token
-		print(token)
 		Server.connect_to_server()
-		#remove gui for login
 	else:
 		print("Please provide correct username and password")
 		get_node("/root/SceneHandler/MainScreen/Background/Login/LoginButton").disabled = false

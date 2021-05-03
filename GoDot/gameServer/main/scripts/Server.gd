@@ -8,6 +8,7 @@ var port = 1909
 const MAX_PLAYERS = 100
 
 var expectedTokens = []
+var playerStateCollection = {}
 
 func _ready():
 	start_server()
@@ -28,6 +29,8 @@ func _peer_disconnected(playerId):
 	print("disconnected Id: " + String(playerId))
 	if has_node(str(playerId)):
 		get_node(str(playerId)).queue_free()
+		playerStateCollection.erase(playerId)
+		rpc_id(0, "despawn_player", playerId)
 
 func _on_TokenExpiration_timeout():
 	var currentTime = OS.get_unix_time()
@@ -42,6 +45,7 @@ func _on_TokenExpiration_timeout():
 	print(expectedTokens)
 	
 func fetch_token(playerId):
+	print("fetching")
 	rpc_id(playerId, "fetch_token")
 	
 remote func return_token(token):
@@ -50,10 +54,23 @@ remote func return_token(token):
 
 func return_token_verification_results(playerId, result):
 	rpc_id(playerId, "return_token_verification_results", result)
-
+	if result == true:
+		rpc_id(0, "spawn_new_player", playerId, Vector3(0, 100, 0))
+		
+func receive_player_state(playerState):
+	var playerId = get_tree().get_rpc_sender_id()
+	if playerStateCollection.has(playerId):
+		if playerStateCollection[playerId]["T"] < playerState["T"]:
+			playerStateCollection[playerId] = playerState
+	else:
+		playerStateCollection[playerId] = playerState
+		
+func send_world_state(worldState):
+	rpc_unreliable_id(0, "receive_world_state", worldState)
+	
 #Game request values for players
 remote func fetch_player_inventory():
 	var playerId = get_tree().get_rpc_sender_id()
-	var playerInventory = get_node(str(playerId)).playerInventory
-	rpc_id(playerId, "return_player_inventory", playerInventory)
+	rpc_id(playerId, "return_player_inventory", {})
+	#var playerInventory = get_node(str(playerId)).playerInventory
 

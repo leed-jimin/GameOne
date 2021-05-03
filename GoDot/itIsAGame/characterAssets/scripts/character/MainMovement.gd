@@ -16,6 +16,7 @@ var yVelo = 0
 var grounded = is_on_floor()
 var moveVec = Vector3()
 var justJumped = false
+var playerState
 
 
 func _ready():
@@ -23,9 +24,13 @@ func _ready():
 
 func _physics_process(_delta):
 	grounded = is_on_floor()
+	if grounded:
+		charDet.geoState.set_currState("GROUND")
+	else:
+		charDet.geoState.set_currState("AIR")
 	moveVec = Vector3()
 	justJumped = false
-
+	
 	yVelo -= GRAVITY
 	if yVelo < SPEED_MAX_FALL:
 		yVelo = SPEED_MAX_FALL
@@ -77,6 +82,7 @@ func _physics_process(_delta):
 		animationHandler.handle_aerial_movement_animation(justJumped, grounded, moveVec)
 	
 	move_and_slide_wrapper(moveVec)
+	define_player_state()
 	#print(charDet.geoState.get_currState())
 	
 func move_and_slide_wrapper(moveVec):
@@ -90,6 +96,9 @@ func move_and_slide_wrapper(moveVec):
 	moveVec.y = yVelo
 	move_and_slide(moveVec, Vector3(0, 1, 0))
 
+func define_player_state():
+	playerState = {"T": OS.get_system_time_msecs(), "P": global_transform.origin}
+	#Server.send_player_state(playerState)
 
 func _on_AnimationPlayer_animation_finished():
 	animationHandler.set_to_idle()

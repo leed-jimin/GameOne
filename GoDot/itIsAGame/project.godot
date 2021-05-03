@@ -51,6 +51,10 @@ window/size/height=768
 
 singletons=[  ]
 
+[global]
+
+phys=false
+
 [input]
 
 jump={

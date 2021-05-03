@@ -31,11 +31,24 @@ remote func fetch_token():
 remote func return_token_verification_results(result):
 	print("received token results")
 	if result == true:
-		get_node("/root/SceneHandler/LoginScreen").queue_free()
+		get_node("/root/SceneHandler/MainScreen").queue_free()
+		get_node("/root/SceneHandler").player_verified()
 		print("successful token verification")
 	else:
 		print("login failed; try again")
-		get_node("LoginScreen/NinePatchRect/VBoxContainer/LoginButton").disabled = false
+		get_node("MainScreen/NinePatchRect/VBoxContainer/LoginButton").disabled = false
+
+func send_player_state(playerState):
+	rpc_unreliable_id(1, "receive_player_state", playerState)
+
+remote func receive_world_state(worldState):
+	get_node("/root/SceneHandler").update_world_state(worldState)
+
+remote func spawn_new_player(playerId, spawnPosition):
+	get_node("/root/SceneHandler").spawn_new_player(playerId, spawnPosition)
+	
+remote func despawn_player(playerId):
+	get_node("/root/SceneHandler").despawn_player(playerId)
 
 #server calls for player info
 func fetch_player_inventory():
