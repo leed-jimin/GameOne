@@ -1,15 +1,25 @@
 extends Node
 
+var Player_Stats = preload("res://main/userDetails/PlayerStats.tscn")
+
 var network = NetworkedMultiplayerENet.new()
 var ip = "127.0.0.1"
 var port = 1909
 var token
 
-var Player_Stats = preload("res://main/userDetails/PlayerStats.tscn")
-
-func _ready():
-	pass
-	#connect_to_server()
+var clientClock = 0
+var decimalCollector : float = 0
+var latencyArray = []
+var latency = 0
+var deltaLatency = 0
+	
+func _physics_process(delta):
+	clientClock += int(delta * 1000) + deltaLatency
+	deltaLatency = 0 
+	decimalCollector += (delta * 1000) - int(delta * 1000)
+	if decimalCollector >= 1.00:
+		clientClock += 1
+		decimalCollector -= 1.00
 	
 func connect_to_server():
 	network.create_client(ip, port)
@@ -19,11 +29,42 @@ func connect_to_server():
 	network.connect("connection_failed", self, "_on_connection_failed")
 
 func _on_connection_succeeded():
-	print("connection success")
-	fetch_player_inventory()
+	print("game server: connection success")
+	#fetch_player_inventory()
+	rpc_id(1, "fetch_server_time", OS.get_system_time_msecs())
+	var timer = Timer.new()
+	timer.wait_time = 0.5
+	timer.autostart = true
+	timer.connect("timeout", self, "determine_latency")
+	self.add_child(timer)
+	
 	
 func _on_connection_failed():
-	print("connection fail")
+	print("game server: connection fail")
+
+func determine_latency():
+	rpc_id(1, "determine_latency", OS.get_system_time_msecs())
+
+remote func return_server_time(serverTime, clientTime):
+	latency = (OS.get_system_time_msecs() - clientTime) / 2
+	clientClock = serverTime + latency
+
+remote func return_latency(clientTime):
+	latencyArray.append((OS.get_system_time_msecs() - clientTime) / 2)
+	if latencyArray.size() == 9:
+		var totalLatency = 0
+		latencyArray.sort()
+		var midPoint = latencyArray[4]
+		for i in range(latencyArray.size()-1,-1,-1):
+			if latencyArray[i] > (2 * midPoint) and latencyArray[i] > 20:
+				latencyArray.remove(i)
+			else:
+				totalLatency += latencyArray[i]
+		deltaLatency = (totalLatency / latencyArray.size()) - latency
+		latency = totalLatency / latencyArray.size()
+		print("new latency", latency)
+		print("delta latency", deltaLatency)
+		latencyArray.clear()
 
 remote func fetch_token():
 	rpc_id(1, "return_token", token)
@@ -50,6 +91,19 @@ remote func spawn_new_player(playerId, spawnPosition):
 remote func despawn_player(playerId):
 	get_node("/root/SceneHandler").despawn_player(playerId)
 
+#Combat rpc calls
+func npc_hit(enemyId, damage):
+	rpc_id(1, "send_npc_hit", enemyId, damage)
+
+func send_attack(attack):
+	rpc_id(1, "attack", attack, clientClock)
+	
+func receive_attack(attack, spawnTime, playerId):
+	if playerId == get_tree().get_network_unique_id():
+		pass #could correct client side predictions
+	else:
+		get_node("/root/SceneHandler/YSort/OtherPlayers/" + str(playerId)).attackDict[spawnTime] = {"Attack": attack}
+	
 #server calls for player info
 func fetch_player_inventory():
 	rpc_id(1, "fetch_player_inventory")

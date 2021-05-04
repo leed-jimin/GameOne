@@ -19,6 +19,7 @@ config/icon="res://icon.png"
 ServerData="*res://main/instances/ServerData.gd"
 HubConnection="*res://main/instances/HubConnection.gd"
 StateProcessing="*res://main/instances/StateProcessing.gd"
+Map="*res://main/scripts/Map.gd"
 
 [physics]
 

@@ -83,7 +83,7 @@ func _physics_process(_delta):
 	
 	move_and_slide_wrapper(moveVec)
 	define_player_state()
-	#print(charDet.geoState.get_currState())
+
 	
 func move_and_slide_wrapper(moveVec):
 	moveVec = moveVec.normalized()
@@ -97,12 +97,11 @@ func move_and_slide_wrapper(moveVec):
 	move_and_slide(moveVec, Vector3(0, 1, 0))
 
 func define_player_state():
-	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin}
+	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin, "R": rotation_degrees}
 	Server.send_player_state(playerState)
 
 func _on_AnimationPlayer_animation_finished():
 	animationHandler.set_to_idle()
-
 
 func _on_Timer_timeout():
 	animationHandler.timer_timeout() # Replace with function body.

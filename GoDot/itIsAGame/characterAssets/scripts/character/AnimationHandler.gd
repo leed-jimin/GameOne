@@ -48,6 +48,7 @@ func handle_attack_animation(type):
 	charDet.actionState.set_currState("ATTACKING")
 	print(charDet.geoState.get_currState())
 	if type == "light_attack":
+		Server.send_attack(lightAttkArr[0])
 		if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
 			timer.start()
 			play_anim(lightAirArr[0])

@@ -67,6 +67,18 @@ remote func receive_player_state(playerState):
 func send_world_state(worldState):
 	rpc_unreliable_id(0, "receive_world_state", worldState)
 	
+remote func fetch_server_time(clientTime):
+	var playerId = get_tree().get_rpc_sender_id()
+	rpc_id(playerId, "return_server_time", OS.get_system_time_msecs(), clientTime)
+	
+remote func determine_latency(clientTime):
+	var playerId = get_tree().get_rpc_sender_id()
+	rpc_id(playerId, "return_latency", clientTime)
+	
+#Combat rpc calls
+remote func send_npc_hit(enemyId, damage):
+	get_node("Map").npc_hit(enemyId, damage)
+
 #Game request values for players
 remote func fetch_player_inventory():
 	var playerId = get_tree().get_rpc_sender_id()
