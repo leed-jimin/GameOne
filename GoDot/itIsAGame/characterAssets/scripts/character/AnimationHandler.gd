@@ -1,8 +1,10 @@
+extends Node
+
 class_name AnimationHandler
 
-var anim
-var charDet
-var timer
+onready var anim = get_node("../AnimationPlayer")
+onready var timer = get_node("../Timer")
+onready var charDet = get_node("../CharacterDetails")
 
 #these will be loaded from playerdetails
 var lightAttkPoints = 0
@@ -18,23 +20,19 @@ var heavyAirArr = []
 #these will be loaded from playerdetails
 
 
-func _init(animPlayer, characterDetails, timerNode):
-	charDet = characterDetails
-	anim = animPlayer
-	timer = timerNode
-
 func _ready():
 	anim.get_animation("Walking").set_loop(true)
 	anim.get_animation("Idle").set_loop(true)
 	anim.get_animation("Running").set_loop(true)
 
-func handle_aerial_movement_animation(just_jumped, grounded, moveVec):
+func handle_aerial_movement_animation(grounded, moveVec):
 	if charDet.geoState.get_currState() == 1:
 		play_anim("JumpUp")
 		#charDet.geoState.set_currState("AIR")
 		return
 	elif charDet.geoState.get_currState() == 1 and charDet.actionState.get_currState() == 0 and grounded:
 		#TODO fix this i think
+		print("fall")
 		#charDet.geoState.set_currState("GROUND")
 		handle_ground_animation()
 	elif grounded:
@@ -46,9 +44,7 @@ func handle_aerial_movement_animation(just_jumped, grounded, moveVec):
 	
 func handle_attack_animation(type):
 	charDet.actionState.set_currState("ATTACKING")
-	print(charDet.geoState.get_currState())
 	if type == "light_attack":
-		Server.send_attack(lightAttkArr[0])
 		if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
 			timer.start()
 			play_anim(lightAirArr[0])
@@ -57,8 +53,10 @@ func handle_attack_animation(type):
 			timer.wait_time = lightWaitTime
 			timer.start()
 			if lightAttkPoints == 0:
+				Server.send_attack(lightAttkArr[lightAttkPoints])
 				play_anim(lightAttkArr[lightAttkPoints])
 			elif lightAttkPoints != lightAttkArr.size() && anim.get_queue().size() == 0:
+				Server.send_attack(lightAttkArr[lightAttkPoints])
 				anim.queue(lightAttkArr[lightAttkPoints])
 			lightAttkPoints = lightAttkPoints + 1
 	elif type == "heavy_attack":
@@ -105,7 +103,51 @@ func play_anim(name):
 func set_to_idle():
 	if charDet.geoState.get_currState() == 0: #ground
 		play_anim("Idle")
-	elif charDet.geoState.get_currState() == 1:
-		play_anim("JumpUp")
+
 	charDet.actionState.set_currState("NONE")
 	
+func on_hit(damage):
+	anim.play("lightDamage")
+
+func _on_headHB_body_entered(body):
+	pass # Replace with function body.
+
+
+func _on_torsoHB_body_entered(body):
+	pass # Replace with function body.
+
+
+func _on_lHandHB_body_entered(body):
+	if charDet.actionState.get_currState() == 2:
+		if body.is_in_group("OtherPlayers") or body.is_in_group("Enemies"):
+			Server.send_character_hit(body.name, get_node("../rig/Skeleton/leftHandBone").global_transform.origin, body.transform.origin)
+
+
+func _on_rHandHB_body_entered(body):
+	if charDet.actionState.get_currState() == 2:
+		if body.is_in_group("OtherPlayers") or body.is_in_group("Enemies"):
+			#Server.send_character_hit(get_parent().transform.origin, get_node("../rig/Skeleton/rightHandBone").global_transform.origin, body.transform.origin)
+			pass
+
+func _on_lFootHB_body_entered(body):
+	pass # Replace with function body.
+
+
+func _on_rFootHB_body_entered(body):
+	pass # Replace with function body.
+
+
+func _on_lUpperArmHB_body_entered(body):
+	pass # Replace with function body.
+
+
+func _on_rUpperArmHB_body_entered(body):
+	pass # Replace with function body.
+
+
+func _on_lThighHB_body_entered(body):
+	pass # Replace with function body.
+
+
+func _on_rThighHB_body_entered(body):
+	pass # Replace with function body.

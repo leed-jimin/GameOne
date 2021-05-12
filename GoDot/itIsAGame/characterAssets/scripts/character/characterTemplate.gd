@@ -1,31 +1,47 @@
 extends KinematicBody
 
+var States = load("res://characterAssets/scripts/character/States.gd") # Relative path
+
 var attackDict = {}
-var state = "Idle"
+
+const actionStates = {
+	"NONE": 0,
+	"BUSY": 1,
+}
+
+var actionState
 
 onready var anim = get_node("AnimationPlayer")
-#TODO
+
+func _ready():
+	actionState = States.new(actionStates, "NONE")
+
 func move_player(newPosition, rotationVector):
-	if not state == "Attack":
-		if transform.origin == newPosition:
-			state = "Idle"
+	if not actionState.get_currState() == 1:
+		if transform.origin.is_equal_approx(newPosition):
 			anim.play("Idle")
 		else:
-			state = "Idle"
 			anim.play("Walking")
 			transform.origin = newPosition
 			rotation_degrees = rotationVector
 	
 func _physics_process(delta):
-	if not attackDict == {}:
+	if attackDict.size() > 0:
 		attack()
 	
 func attack():
-	for attack in attackDict.keys():
-		if attack <= Server.clientClock:
-			state = "Attack"
-			anim.play(attackDict[attack])
-			
+	for time in attackDict.keys():
+		if time <= Server.clientClock:
+			actionState.set_currState("BUSY")
+			anim.play(attackDict[time]["Attack"])
+			attackDict.erase(time)
 			yield(get_tree().create_timer(0.5), "timeout")
 			
-			state = "Idle"
+			actionState.set_currState("NONE")
+
+func on_hit(damage):
+	actionState.set_currState("BUSY")
+	anim.play("lightDamage")
+	yield(get_tree().create_timer(0.5), "timeout")
+	actionState.set_currState("NONE")
+	print("taking hit")

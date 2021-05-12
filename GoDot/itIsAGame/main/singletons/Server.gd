@@ -62,8 +62,7 @@ remote func return_latency(clientTime):
 				totalLatency += latencyArray[i]
 		deltaLatency = (totalLatency / latencyArray.size()) - latency
 		latency = totalLatency / latencyArray.size()
-		print("new latency", latency)
-		print("delta latency", deltaLatency)
+		#print("new latency", latency)
 		latencyArray.clear()
 
 remote func fetch_token():
@@ -92,18 +91,33 @@ remote func despawn_player(playerId):
 	get_node("/root/SceneHandler").despawn_player(playerId)
 
 #Combat rpc calls
-func npc_hit(enemyId, damage):
-	rpc_id(1, "send_npc_hit", enemyId, damage)
-
+#func npc_hit(enemyId, damage):
+#	rpc_id(1, "send_npc_hit", enemyId, damage)
+#
+#func player_hit(playerId, damage):
+#	rpc_id(1, "send_player_hit", playerId, damage)
+#
 func send_attack(attack):
 	rpc_id(1, "attack", attack, clientClock)
+
+func send_character_hit(id, attackPosition, attackeePosition):
+	rpc_id(1, "character_hit", id, attackPosition, attackeePosition)
 	
-func receive_attack(attack, spawnTime, playerId):
+remote func receive_attack(attack, spawnTime, playerId):
 	if playerId == get_tree().get_network_unique_id():
 		pass #could correct client side predictions
 	else:
 		get_node("/root/SceneHandler/YSort/OtherPlayers/" + str(playerId)).attackDict[spawnTime] = {"Attack": attack}
 	
+remote func receive_hit(playerId, damage):
+	print("receiving hit")
+	if playerId == get_tree().get_network_unique_id():
+		print("got hit")
+		get_node("/root/SceneHandler/characterModel/AnimationHandler").on_hit(damage)
+	else:
+		print("other got hit")
+		get_node("/root/SceneHandler/YSort/OtherPlayers/" + str(playerId)).on_hit(damage);
+
 #server calls for player info
 func fetch_player_inventory():
 	rpc_id(1, "fetch_player_inventory")

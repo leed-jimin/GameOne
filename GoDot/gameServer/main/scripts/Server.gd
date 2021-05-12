@@ -1,7 +1,6 @@
 extends Node
 
 onready var playerVerificationProcess = get_node("PlayerVerification")
-onready var combatFunctions = get_node("Combat")
 
 var network = NetworkedMultiplayerENet.new()
 var port = 1909
@@ -30,6 +29,7 @@ func _peer_disconnected(playerId):
 	if has_node(str(playerId)):
 		get_node(str(playerId)).queue_free()
 		playerStateCollection.erase(playerId)
+		get_node("GameLogic").playerList.erase(playerId)
 		rpc_id(0, "despawn_player", playerId)
 
 func _on_TokenExpiration_timeout():
@@ -76,8 +76,17 @@ remote func determine_latency(clientTime):
 	rpc_id(playerId, "return_latency", clientTime)
 	
 #Combat rpc calls
-remote func send_npc_hit(enemyId, damage):
-	get_node("Map").npc_hit(enemyId, damage)
+func send_receive_hit(playerId, damage):
+	print("sending receive hit")
+	rpc_id(0, "receive_hit", playerId, damage)
+
+remote func character_hit(receiverId, attackPosition, receiverPosition): #damage?
+	var playerId = get_tree().get_rpc_sender_id()
+	get_node("GameLogic").character_hit(receiverId, attackPosition, receiverPosition)
+
+remote func attack(attack, clientClock):
+	var playerId = get_tree().get_rpc_sender_id()
+	rpc_id(0, "receive_attack", attack, clientClock, playerId)
 
 #Game request values for players
 remote func fetch_player_inventory():

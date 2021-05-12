@@ -9,12 +9,12 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Reference",
+"base": "Node",
 "class": "AnimationHandler",
 "language": "GDScript",
 "path": "res://characterAssets/scripts/character/AnimationHandler.gd"
 }, {
-"base": "Reference",
+"base": "Node",
 "class": "CharacterDetails",
 "language": "GDScript",
 "path": "res://characterAssets/scripts/character/CharacterDetails.gd"

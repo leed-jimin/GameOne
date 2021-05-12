@@ -10,7 +10,7 @@ func _physics_process(delta):
 		for player in worldState.keys():
 			worldState[player].erase("T")
 		worldState["T"] = OS.get_system_time_msecs()
-		worldState["Enem"] = server.get_node("Map").enemyList
+		worldState["Enem"] = server.get_node("GameLogic").enemyList
 		#verification
 		#Anti-cheat
 		#cuts

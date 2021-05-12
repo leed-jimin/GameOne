@@ -1,10 +1,6 @@
 extends KinematicBody
 
-var Character_Details = load("res://characterAssets/scripts/character/CharacterDetails.gd") # Relative path
-onready var charDet = Character_Details.new()
-
-var AnimHandler = load("res://characterAssets/scripts/character/AnimationHandler.gd")
-onready var animationHandler = AnimHandler.new($AnimationPlayer, charDet, $Timer)
+onready var charDet = get_node("CharacterDetails")
 
 const SPEED_WALK = 15
 const SPEED_RUN = 30
@@ -18,7 +14,9 @@ var moveVec = Vector3()
 var justJumped = false
 var playerState
 
+var currentHp = 100
 
+#TODO use the position of bone to detect collision on server side
 func _ready():
 	pass
 
@@ -28,10 +26,10 @@ func _physics_process(_delta):
 		charDet.geoState.set_currState("GROUND")
 	else:
 		charDet.geoState.set_currState("AIR")
+		yVelo -= GRAVITY
+		
 	moveVec = Vector3()
-	justJumped = false
 	
-	yVelo -= GRAVITY
 	if yVelo < SPEED_MAX_FALL:
 		yVelo = SPEED_MAX_FALL
 		
@@ -68,18 +66,18 @@ func _physics_process(_delta):
 				yVelo = -0.1
 			#attacks / TODO need check for item
 			if Input.is_action_just_pressed("light_attack"):
-				animationHandler.handle_attack_animation("light_attack")
+				get_node("AnimationHandler").handle_attack_animation("light_attack")
 			if Input.is_action_just_pressed("heavy_attack"):
-				animationHandler.handle_attack_animation("heavy_attack")
+				get_node("AnimationHandler").handle_attack_animation("heavy_attack")
 			#TODO Block
 		elif charDet.actionState.get_currState() == 2: #attacking
 			if Input.is_action_just_pressed("light_attack"):
-				animationHandler.handle_attack_animation("light_attack")
+				get_node("AnimationHandler").handle_attack_animation("light_attack")
 			if Input.is_action_just_pressed("heavy_attack"):
-				animationHandler.handle_attack_animation("heavy_attack")
+				get_node("AnimationHandler").handle_attack_animation("heavy_attack")
 			#Standard Attacks End
 	if charDet.actionState.get_currState() == charDet.actionState.get_states()["NONE"]:
-		animationHandler.handle_aerial_movement_animation(justJumped, grounded, moveVec)
+		get_node("AnimationHandler").handle_aerial_movement_animation(grounded, moveVec)
 	
 	move_and_slide_wrapper(moveVec)
 	define_player_state()
@@ -91,7 +89,7 @@ func move_and_slide_wrapper(moveVec):
 	moveVec *= SPEED_WALK
 	
 	if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
-		moveVec /= 2
+		moveVec /= 1.5
 		
 	moveVec.y = yVelo
 	move_and_slide(moveVec, Vector3(0, 1, 0))
@@ -101,7 +99,7 @@ func define_player_state():
 	Server.send_player_state(playerState)
 
 func _on_AnimationPlayer_animation_finished():
-	animationHandler.set_to_idle()
+	get_node("AnimationHandler").set_to_idle()
 
 func _on_Timer_timeout():
-	animationHandler.timer_timeout() # Replace with function body.
+	get_node("AnimationHandler").timer_timeout() # Replace with function body.

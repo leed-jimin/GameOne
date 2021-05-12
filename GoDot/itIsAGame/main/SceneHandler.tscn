@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
+[ext_resource path="res://characterAssets/scenes/characterTemplate.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Maps/scenes/underground_arena.tscn" type="PackedScene" id=2]
 [ext_resource path="res://GUI/scenes/MainScreen.tscn" type="PackedScene" id=3]
 [ext_resource path="res://main/SceneHandler.gd" type="Script" id=4]
@@ -34,5 +35,9 @@ material/0 = null
 [node name="YSort" type="YSort" parent="."]
 
 [node name="OtherPlayers" type="YSort" parent="YSort"]
+
+[node name="characterTemplate" parent="YSort/OtherPlayers" instance=ExtResource( 1 )]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 18.9866, 3.38058, 0 )
+visible = false
 
 [node name="Enemies" type="YSort" parent="YSort"]

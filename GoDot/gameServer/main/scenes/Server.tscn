@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://main/scripts/Server.gd" type="Script" id=1]
-[ext_resource path="res://main/scripts/Combat.gd" type="Script" id=2]
 [ext_resource path="res://playerContainer/scripts/PlayerVerification.gd" type="Script" id=3]
-[ext_resource path="res://main/scripts/Map.gd" type="Script" id=4]
+[ext_resource path="res://main/scripts/GameLogic.gd" type="Script" id=4]
+[ext_resource path="res://maps/server_underground_arena.tscn" type="PackedScene" id=5]
 
 [node name="Server" type="Node"]
 script = ExtResource( 1 )
@@ -15,15 +15,14 @@ script = ExtResource( 3 )
 wait_time = 15.0
 autostart = true
 
-[node name="Combat" type="Node" parent="."]
-script = ExtResource( 2 )
-
 [node name="TokenExpiration" type="Timer" parent="."]
 wait_time = 15.0
 autostart = true
 
-[node name="Map" type="Node" parent="."]
+[node name="GameLogic" type="Node" parent="."]
 script = ExtResource( 4 )
+
+[node name="underground_arena" parent="." instance=ExtResource( 5 )]
 
 [connection signal="timeout" from="PlayerVerification/VerificationExpiration" to="PlayerVerification" method="_on_VerificationExpiration_timeout"]
 [connection signal="timeout" from="TokenExpiration" to="." method="_on_TokenExpiration_timeout"]

@@ -10,13 +10,13 @@ var worldStateBuffer = [] #worldStateBuffer = [pastpast WS, past WS, future WS, 
 const interpolationOffset = 100
 
 func _ready():
+	#player_verified()
 	pass
 	
 func player_verified():
 	var model = characterModel.instance()
-	model.transform.origin = Vector3(20, 20, 0)
+	model.transform.origin = Vector3(0, 20, 0)
 	add_child(model)
-	
 	
 #other player logic	
 func spawn_new_player(playerId, spawnPosition):
@@ -31,11 +31,10 @@ func spawn_new_player(playerId, spawnPosition):
 
 func spawn_new_enemy(enemyId, enemyDict):
 	var newEnemy = enemyModel.instance()
-	newEnemy.transform.origin = enemyDict["EnemyLocation"]
-	newEnemy.maxHp = enemyDict["EnemyMaxHealth"]
-	newEnemy.currentHp = enemyDict["EnemyHealth"]
-	newEnemy.type = enemyDict["EnemyType"]
-	newEnemy.state = enemyDict["EnemyState"]
+	newEnemy.transform.origin = enemyDict["Location"]
+	newEnemy.currentHp = enemyDict["Health"]
+	newEnemy.type = enemyDict["Type"]
+	newEnemy.state = enemyDict["State"]
 	newEnemy.name = str(enemyId)
 	get_node("YSort/Enemies").add_child(newEnemy, true)
 
@@ -76,10 +75,10 @@ func _physics_process(delta):
 				if not worldStateBuffer[1]["Enem"].has(enemy):
 					continue
 				if get_node("YSort/Enemies").has_node(str(enemy)):
-					var newPosition = lerp(worldStateBuffer[1]["Enem"][enemy]["EnemyLocation"], worldStateBuffer[2]["Enem"][enemy]["EnemyLocation"], interpolationFactor)
+					var newPosition = lerp(worldStateBuffer[1]["Enem"][enemy]["Location"], worldStateBuffer[2]["Enem"][enemy]["Location"], interpolationFactor)
 					#var rotationVector = worldStateBuffer[2]["Enem"][enemy][""]
 					get_node("YSort/Enemies/" + str(enemy)).move_enemy(newPosition)
-					get_node("YSort/Enemies/" + str(enemy)).health(worldStateBuffer[1]["Enem"][enemy]["EnemyHealth"])
+					get_node("YSort/Enemies/" + str(enemy)).health(worldStateBuffer[1]["Enem"][enemy]["Health"])
 				else:
 					spawn_new_enemy(enemy, worldStateBuffer[2]["Enem"][enemy])
 		elif renderTime > worldStateBuffer[1].T:
