@@ -10,20 +10,21 @@ var worldStateBuffer = [] #worldStateBuffer = [pastpast WS, past WS, future WS, 
 const interpolationOffset = 100
 
 func _ready():
-	#player_verified()
+	#spawn_user_player()
 	pass
 	
-func player_verified():
+func spawn_user_player():
 	var model = characterModel.instance()
-	model.transform.origin = Vector3(0, 20, 0)
+	model.transform.origin = Vector3(0, 10, 0)
 	add_child(model)
+	$Camera.set_target(model.get_node("CameraLocation"))
 	
-#other player logic	
+#other player logic
 func spawn_new_player(playerId, spawnPosition):
 	if get_tree().get_network_unique_id() == playerId:
 		pass
 	else:
-		if not get_node("YSort/OtherPlayers").has_node(str(playerId)): 
+		if not get_node("YSort/OtherPlayers").has_node(str(playerId)):
 			var newPlayer = characterTemplate.instance()
 			newPlayer.transform.origin = spawnPosition # might not work
 			newPlayer.name = str(playerId)

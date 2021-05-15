@@ -1,0 +1,64 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://GUI/UIElements/png-clipart-brown-wooden-wall-desktop-computer-icons-wood-stain-wooden-shop-background-miscellaneous-texture.png" type="Texture" id=1]
+[ext_resource path="res://GUI/Fonts/Convergence-Regular.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://GUI/scripts/Hub.gd" type="Script" id=3]
+[ext_resource path="res://GUI/UIElements/clickbtn.png" type="Texture" id=4]
+[ext_resource path="res://GUI/UIElements/defaultbtn.png" type="Texture" id=5]
+
+[sub_resource type="DynamicFont" id=1]
+size = 32
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=2]
+outline_size = 2
+outline_color = Color( 0.054902, 0.0627451, 0.054902, 1 )
+font_data = ExtResource( 2 )
+
+[node name="Hub" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+margin_right = 1373.0
+margin_bottom = 772.0
+texture = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="NinePatchRect"]
+margin_left = 55.9024
+margin_top = 37.6504
+margin_right = 462.902
+margin_bottom = 122.65
+custom_fonts/font = SubResource( 1 )
+text = "Hub"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureButton" type="TextureButton" parent="NinePatchRect"]
+margin_left = 456.104
+margin_top = 396.571
+margin_right = 628.104
+margin_bottom = 455.571
+texture_normal = ExtResource( 5 )
+texture_pressed = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="NinePatchRect/TextureButton"]
+margin_left = 44.5403
+margin_top = 19.8108
+margin_right = 136.54
+margin_bottom = 53.8108
+custom_fonts/font = SubResource( 2 )
+text = "create lobby"
+
+[connection signal="pressed" from="NinePatchRect/TextureButton" to="." method="_on_TextureButton_pressed"]

@@ -18,8 +18,9 @@ config/icon="res://icon.png"
 
 ServerData="*res://main/instances/ServerData.gd"
 HubConnection="*res://main/instances/HubConnection.gd"
-StateProcessing="*res://main/instances/StateProcessing.gd"
-GameLogic="*res://main/scripts/GameLogic.gd"
+StateProcessing="res://main/scripts/StateProcessing.gd"
+GameLogic="res://main/scripts/GameLogic.gd"
+LobbyHandler="*res://main/instances/LobbyHandler.gd"
 
 [physics]
 

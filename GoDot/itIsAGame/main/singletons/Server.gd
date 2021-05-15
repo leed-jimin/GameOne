@@ -71,8 +71,8 @@ remote func fetch_token():
 remote func return_token_verification_results(result):
 	print("received token results")
 	if result == true:
-		get_node("/root/SceneHandler/MainScreen").queue_free()
-		get_node("/root/SceneHandler").player_verified()
+		get_node("/root/Main/LoginScreen").queue_free()
+		get_node("/root/Main").player_verified()
 		print("successful token verification")
 	else:
 		print("login failed; try again")
@@ -90,6 +90,36 @@ remote func spawn_new_player(playerId, spawnPosition):
 remote func despawn_player(playerId):
 	get_node("/root/SceneHandler").despawn_player(playerId)
 
+#lobby calls
+func create_lobby():
+	rpc_id(1, "request_create_lobby")
+
+remote func lobby_created(playerId, lobbyId):
+	get_node("/root/Main").load_lobby("Create")
+	
+func join_lobby(lobbyId):
+	rpc_id(1, "request_join_lobby", lobbyId)
+	
+remote func return_lobby_joined(playerId, lobbyId):
+	get_node("/root/Main/Hub").join_lobby()
+	pass
+	
+func leave_lobby(lobbyId):
+	rpc_id(1, "request_leave_lobby", lobbyId)
+
+remote func return_lobby_left():
+	get_node("/root/Main/Lobby").switch_to_hub()
+	pass
+
+func request_start_game(lobbyId):
+	rpc_id(1, "request_start_game", lobbyId)
+	
+remote func game_starting():
+	pass
+	
+remote func start_game():
+	pass
+	
 #Combat rpc calls
 #func npc_hit(enemyId, damage):
 #	rpc_id(1, "send_npc_hit", enemyId, damage)

@@ -4,7 +4,7 @@ var network = NetworkedMultiplayerENet.new()
 var gatewayApi = MultiplayerAPI.new()
 var port = 1912
 const MAX_PLAYERS = 100
-
+var serverCount = 0;
 var gameServerList = {}
 
 
@@ -28,7 +28,8 @@ func start_server():
 	
 func _peer_connected(gameServerId):
 	print("AU:gameServer connected: " + str(gameServerId))
-	gameServerList["GameServer1"] = gameServerId
+	gameServerList["GameServer" + serverCount] = gameServerId
+	serverCount += 1
 	print(gameServerList)
 	
 func _peer_disconnected(gameServerId):

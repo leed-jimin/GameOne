@@ -1,0 +1,27 @@
+Low poly game asset Bow pack.
+It contains 6 diferrent models.
+
+Package includes:
+
+Bow_01: 130 verts, 252 tris.
+
+Bow_02: 274 verts, 540 tris.
+
+Bow_03: 392 verts, 732 tris.
+
+Bow_04: 634 verts, 1156 tris.
+
+Bow_05: 556 verts, 1092 tris.
+
+Arrow: 29 verts, 42 tris.
+
+
+All the assets are free for any use but please don't resell them​ and Credit me (@CreativeSky2000).
+
+If you have any problems please contact me.
+
+Feel free to comment bellow.
+
+Hope you enjoy and thanks for buying 
+
+:D

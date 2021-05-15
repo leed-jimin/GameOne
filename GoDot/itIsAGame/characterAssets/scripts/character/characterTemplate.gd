@@ -18,16 +18,20 @@ func _ready():
 
 func move_player(newPosition, rotationVector):
 	if not actionState.get_currState() == 1:
+		rotate_model(rotationVector)
 		if transform.origin.is_equal_approx(newPosition):
 			anim.play("Idle")
 		else:
 			anim.play("Walking")
 			transform.origin = newPosition
-			rotation_degrees = rotationVector
 	
 func _physics_process(delta):
 	if attackDict.size() > 0:
 		attack()
+		
+func rotate_model(rotationVector):
+	get_node("rig").rotation_degrees = rotationVector
+	get_node("CollisionShape").rotation_degrees = rotationVector
 	
 func attack():
 	for time in attackDict.keys():

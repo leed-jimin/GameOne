@@ -36,28 +36,32 @@ func _physics_process(_delta):
 	if charDet.actionState.get_currState() != 1: #not busy
 		if charDet.actionState.get_currState() == 0: #None
 			#Directional movement
+			
+			moveVec.x = int(Input.is_action_pressed("ui_right")) - int(Input.is_action_pressed("ui_left"))
+			moveVec.z = int(Input.is_action_pressed("ui_down")) - int(Input.is_action_pressed("ui_up"))
+			#TODO OPTIMIZE THIS
 			if Input.is_action_pressed("ui_left"):
 				if Input.is_action_pressed("ui_up"):
-					rotation_degrees = Vector3(0, -135, 0)
+					rotate_model(Vector3(0, -135, 0))
 				elif Input.is_action_pressed("ui_down"):
-					rotation_degrees = Vector3(0, -45, 0)
+					rotate_model(Vector3(0, -45, 0))
 				else:
-					rotation_degrees = Vector3(0, -90, 0)
-				moveVec.z += 1
+					rotate_model(Vector3(0, -90, 0))
+
 			elif Input.is_action_pressed("ui_right"):
 				if Input.is_action_pressed("ui_up"):
-					rotation_degrees = Vector3(0, 135, 0)
+					rotate_model(Vector3(0, 135, 0))
 				elif Input.is_action_pressed("ui_down"):
-					rotation_degrees = Vector3(0, 45, 0)
+					rotate_model(Vector3(0, 45, 0))
 				else:
-					rotation_degrees = Vector3(0, 90, 0)
-				moveVec.z += 1
+					rotate_model(Vector3(0, 90, 0))
+
 			elif Input.is_action_pressed("ui_up"):
-				rotation_degrees = Vector3(0, 180, 0)
-				moveVec.z += 1
+				rotate_model(Vector3(0, 180, 0))
+
 			elif Input.is_action_pressed("ui_down"):
-				rotation_degrees = Vector3(0, 0, 0)
-				moveVec.z += 1
+				rotate_model(Vector3(0, 0, 0))
+
 			#Jump input
 			if Input.is_action_just_pressed("jump") && grounded:
 				justJumped = true
@@ -82,7 +86,10 @@ func _physics_process(_delta):
 	move_and_slide_wrapper(moveVec)
 	define_player_state()
 
-	
+func rotate_model(rotationVector):
+	get_node("rig").rotation_degrees = rotationVector
+	get_node("CollisionShape").rotation_degrees = rotationVector
+
 func move_and_slide_wrapper(moveVec):
 	moveVec = moveVec.normalized()
 	moveVec = moveVec.rotated(Vector3(0, 1, 0), rotation.y)

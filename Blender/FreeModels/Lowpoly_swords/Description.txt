@@ -1,0 +1,25 @@
+Low poly game asset Swords pack.
+It contains 5 diferrent models.
+
+Package includes:
+
+Classic_hoplite_sword: 65 verts, 114 tris.
+
+Spartan_sword: 133 verts, 240 tris.
+
+Falchion_sword: 91 verts, 162 tris.
+
+Persian_scimitar: 157 verts, 298 tris.
+
+Pirate_sword: 98 verts, 186 tris.
+
+
+All the assets are free for any use but please don't resell them​ and Credit me (@CreativeSky2000).
+
+If you have any problems please contact me.
+
+Feel free to comment bellow.
+
+Hope you enjoy and thanks for buying 
+
+:D

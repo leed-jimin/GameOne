@@ -120,7 +120,8 @@ func _on_torsoHB_body_entered(body):
 func _on_lHandHB_body_entered(body):
 	if charDet.actionState.get_currState() == 2:
 		if body.is_in_group("OtherPlayers") or body.is_in_group("Enemies"):
-			Server.send_character_hit(body.name, get_node("../rig/Skeleton/leftHandBone").global_transform.origin, body.transform.origin)
+			print("hit")
+			#Server.send_character_hit(body.name, get_node("../rig/Skeleton/leftHandBone").global_transform.origin, body.transform.origin)
 
 
 func _on_rHandHB_body_entered(body):
