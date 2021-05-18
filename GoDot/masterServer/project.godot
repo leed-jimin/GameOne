@@ -10,12 +10,16 @@ config_version=4
 
 [application]
 
-config/name="GameServer"
+config/name="Server"
+run/main_scene="res://main/scenes/Server.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
-StateProcessing="*res://main/instances/StateProcessing.gd"
+ServerData="*res://main/instances/ServerData.gd"
+HubConnection="*res://main/instances/HubConnection.gd"
+StateProcessing="res://main/scripts/StateProcessing.gd"
+LobbyHandler="*res://main/instances/LobbyHandler.gd"
 
 [physics]
 
@@ -24,4 +28,4 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
-environment/default_environment="res://default_env.tres"
+environment/default_environment="res://maps/default_env.tres"

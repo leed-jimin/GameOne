@@ -56,7 +56,7 @@ func request_login():
 	password = ""
 
 remote func return_login_request(results, token):
-	print("results received")
+	print("results received:" + str(results))
 	if results == true:
 		Server.token = token
 		Server.connect_to_server()

@@ -45,7 +45,7 @@ remote func authenticate_player(username, password, playerId):
 			var hashed = str(randi()).sha256_text()
 			var timestamp = str(OS.get_unix_time())
 			token = hashed + timestamp
-			var gameServer = "GameServer1" #have to load balance in the future
+			var gameServer = "GameServer" + str(GameServers.serverCount - 1) #have to load balance in the future
 			GameServers.distribute_login_token(token, gameServer)
 
 	rpc_id(gatewayId, "authentication_results", result, playerId, token)

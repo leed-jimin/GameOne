@@ -8,18 +8,15 @@ onready var game = load("res://main/SceneHandler.tscn")
 
 func _ready():
 	load_login_screen()
-	pass
 
 func load_login_screen():
 	add_child(loginScreen.instance())
-	pass
 	
 func player_verified():
 	load_hub()
 
 func load_hub():
 	add_child(hub.instance())
-	pass
 	
 func load_lobby(action):
 	match action:
@@ -32,7 +29,6 @@ func load_lobby(action):
 	
 func load_game():
 	add_child(game.instance())
-	pass
 	
 func transition():
 	add_child(transition.instance())

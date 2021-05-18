@@ -27,13 +27,15 @@ func _physics_process(delta):
 		for player in worldState.keys():
 			worldState[player].erase("T")
 		worldState["T"] = OS.get_system_time_msecs()
-		worldState["Enem"] = server.get_node("GameLogic").enemyList
+		worldState["Enem"] = enemyList
+		
 		#verification
 		#Anti-cheat
 		#cuts
 		#physics check
 		#anything else
-		server.send_world_state(worldState)
+		
+		#server.send_world_state(worldState)
 
 func spawn_enemy():
 	if enemyList.size() < enemyMaximum:

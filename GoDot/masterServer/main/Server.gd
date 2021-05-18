@@ -1,10 +1,13 @@
 extends Node
 
 onready var playerVerificationProcess = get_node("PlayerVerification")
+onready var gameServer = load("res://main/scenes/GameServer.tscn")
 
 var network = NetworkedMultiplayerENet.new()
 var port = 1909
-const MAX_PLAYERS = 10
+const MAX_PLAYERS = 100
+var serverCount = 0
+var gameServerList = {}
 
 var expectedTokens = []
 
@@ -18,6 +21,7 @@ func start_server():
 	
 	network.connect("peer_connected", self, "_peer_connected")
 	network.connect("peer_disconnected", self, "_peer_disconnected")
+	
 
 func _peer_connected(playerId):
 	print("connected Id: " + String(playerId))
@@ -93,31 +97,6 @@ remote func request_start_game(lobbyId):
 func game_starting():
 	var playerId = get_tree().get_rpc_sender_id()
 	rpc_id(playerId, "game_starting")
-#movement
-remote func receive_player_state(playerState):
-	pass
-#	var playerId = get_tree().get_rpc_sender_id()
-#	if playerStateCollection.has(playerId):
-#		if playerStateCollection[playerId]["T"] < playerState["T"]:
-#			playerStateCollection[playerId] = playerState
-#	else:
-#		playerStateCollection[playerId] = playerState
-		
-func send_world_state(worldState):
-	rpc_unreliable_id(0, "receive_world_state", worldState)
-	
-#Combat rpc calls
-func send_receive_hit(playerId, damage):
-	print("sending receive hit")
-	rpc_id(0, "receive_hit", playerId, damage)
-
-remote func character_hit(receiverId, attackPosition, receiverPosition): #damage?
-	var playerId = get_tree().get_rpc_sender_id()
-	#GameLogic.character_hit(receiverId, attackPosition, receiverPosition)
-
-remote func attack(attack, clientClock):
-	var playerId = get_tree().get_rpc_sender_id()
-	rpc_id(0, "receive_attack", attack, clientClock, playerId)
 
 #Game request values for players
 remote func fetch_player_inventory():

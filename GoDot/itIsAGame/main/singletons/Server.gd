@@ -28,8 +28,16 @@ func connect_to_server():
 	network.connect("connection_succeeded", self, "_on_connection_succeeded")
 	network.connect("connection_failed", self, "_on_connection_failed")
 
+remote func connect_to_other(otherPort):
+	get_tree().network_peer = null
+	network.create_client(ip, otherPort)
+	get_tree().set_network_peer(network)
+	
+	network.connect("connection_succeeded", self, "_on_connection_succeeded")
+	network.connect("connection_failed", self, "_on_connection_failed")
+
 func _on_connection_succeeded():
-	print("game server: connection success")
+	print("server: connection success")
 	#fetch_player_inventory()
 	rpc_id(1, "fetch_server_time", OS.get_system_time_msecs())
 	var timer = Timer.new()
@@ -40,7 +48,7 @@ func _on_connection_succeeded():
 	
 	
 func _on_connection_failed():
-	print("game server: connection fail")
+	print("server: connection fail")
 
 func determine_latency():
 	rpc_id(1, "determine_latency", OS.get_system_time_msecs())

@@ -1,5 +1,6 @@
 extends Node
 
+var worldState
 #Enemies if any
 var enemyIdCounter = 1
 var enemyMaximum = 2
@@ -12,15 +13,30 @@ var playerIdCounter = 1
 var playerMaximum = 2
 var playerTypes = ["EnemyModel"]
 var playerSpawnPoints = [Vector3(30, 20, 20), Vector3(0, 20, 30), Vector3(20, 20, 10)]
-
 var playerList = {}
+
+var playerStateCollection = {}
 
 var openLocations = [0,1,2]
 var occupiedLocations = {}
 
-func _ready():
-	pass
-	
+func _physics_process(delta):
+	var server = get_node("/root/Server")
+	if not playerStateCollection.empty():
+		worldState = playerStateCollection.duplicate(true)
+		for player in worldState.keys():
+			worldState[player].erase("T")
+		worldState["T"] = OS.get_system_time_msecs()
+		worldState["Enem"] = enemyList
+		
+		#verification
+		#Anti-cheat
+		#cuts
+		#physics check
+		#anything else
+		
+		#server.send_world_state(worldState)
+
 func spawn_enemy():
 	if enemyList.size() < enemyMaximum:
 		randomize()
