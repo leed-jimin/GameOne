@@ -3,7 +3,7 @@ extends Node
 var lobbyDict = {}
 var lobbyCount = 0; # this will have to change so that gameId can be the same
 onready var server = get_node("/root/Server")
-onready var stateProcessing = load("res://main/scenes/StateProcessing.tscn")
+#onready var stateProcessing = load("res://main/scenes/StateProcessing.tscn")
 
 func _ready():
 	pass
@@ -37,6 +37,4 @@ func close_lobby(lobbyId):
 	update_lobbies()
 	
 func start_game(lobbyId):
-	var game = stateProcessing.instance()
-	game.name = lobbyId
-	server.add_child(game)
+	pass

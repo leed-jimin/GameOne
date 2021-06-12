@@ -10,22 +10,20 @@ config_version=4
 
 [application]
 
-config/name="Server"
-run/main_scene="res://main/scenes/Server.tscn"
+config/name="MasterServer"
+run/main_scene="res://main/scenes/MasterServer.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
-ServerData="*res://main/instances/ServerData.gd"
 HubConnection="*res://main/instances/HubConnection.gd"
-StateProcessing="res://main/scripts/StateProcessing.gd"
 LobbyHandler="*res://main/instances/LobbyHandler.gd"
+ServerData="*res://main/instances/ServerData.gd"
 
 [physics]
 
-common/physics_fps=20
 common/enable_pause_aware_picking=true
 
 [rendering]
 
-environment/default_environment="res://maps/default_env.tres"
+environment/default_environment="res://default_env.tres"

@@ -10,6 +10,7 @@ func start(playerId):
 	mainInterface.fetch_token(playerId)
 
 func verify(playerId, token):
+	print("verifying")
 	var tokenVerification = false
 	while OS.get_unix_time() - int(token.right(64)) <= 30:
 		if mainInterface.expectedTokens.has(token):

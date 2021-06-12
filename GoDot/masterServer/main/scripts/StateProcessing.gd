@@ -20,23 +20,6 @@ var playerStateCollection = {}
 var openLocations = [0,1,2]
 var occupiedLocations = {}
 
-func _physics_process(delta):
-	var server = get_node("/root/Server")
-	if not playerStateCollection.empty():
-		worldState = playerStateCollection.duplicate(true)
-		for player in worldState.keys():
-			worldState[player].erase("T")
-		worldState["T"] = OS.get_system_time_msecs()
-		worldState["Enem"] = enemyList
-		
-		#verification
-		#Anti-cheat
-		#cuts
-		#physics check
-		#anything else
-		
-		#server.send_world_state(worldState)
-
 func spawn_enemy():
 	if enemyList.size() < enemyMaximum:
 		randomize()
