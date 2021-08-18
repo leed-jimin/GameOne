@@ -7,8 +7,8 @@ onready var lobby = load("res://GUI/scenes/Lobby.tscn")
 onready var game = load("res://main/SceneHandler.tscn")
 
 func _ready():
-	Gateway.connect_to_server("test1", "test1", false) # for testing
 	#load_login_screen()
+	load_game() #for testing animations
 
 func load_login_screen():
 	add_child(loginScreen.instance())

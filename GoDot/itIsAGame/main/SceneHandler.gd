@@ -10,7 +10,7 @@ var worldStateBuffer = [] #worldStateBuffer = [pastpast WS, past WS, future WS, 
 const interpolationOffset = 100
 
 func _ready():
-	#spawn_user_player()
+	spawn_user_player() # this is for testing animations
 	pass
 	
 func spawn_user_player():

@@ -15,28 +15,23 @@ var heavyWaitTime = 1
 
 var lightAttkArr = ["lJab", "rJab", "r_l_f_straightPunch"] #will be loaded from details later
 var heavyAttkArr = ["lFrontKick"]
-var lightAirArr = ["r_l_aerialElbow"] #will be loaded from details later
+var lightAirArr = ["elbow_r_aerial"] #will be loaded from details later
 var heavyAirArr = []
 #these will be loaded from playerdetails
-
 
 func _ready():
 	anim.get_animation("Walking").set_loop(true)
 	anim.get_animation("Idle").set_loop(true)
 	anim.get_animation("Running").set_loop(true)
 
-func handle_aerial_movement_animation(grounded, moveVec):
-	if charDet.geoState.get_currState() == 1:
+func handle_aerial_movement_animation(grounded, moveVec, justJumped, yVelo):
+	if justJumped:
 		play_anim("JumpUp")
-		#charDet.geoState.set_currState("AIR")
-		return
 	elif charDet.geoState.get_currState() == 1 and charDet.actionState.get_currState() == 0 and grounded:
 		#TODO fix this i think
 		print("fall")
-		#charDet.geoState.set_currState("GROUND")
 		handle_ground_animation()
 	elif grounded:
-		#charDet.geoState.set_currState("GROUND")
 		if moveVec.x == 0 and moveVec.z == 0:
 			play_anim("Idle")
 		else:
@@ -53,10 +48,10 @@ func handle_attack_animation(type):
 			timer.wait_time = lightWaitTime
 			timer.start()
 			if lightAttkPoints == 0:
-				Server.send_attack(lightAttkArr[lightAttkPoints])
+				#Server.send_attack(lightAttkArr[lightAttkPoints])
 				play_anim(lightAttkArr[lightAttkPoints])
 			elif lightAttkPoints != lightAttkArr.size() && anim.get_queue().size() == 0:
-				Server.send_attack(lightAttkArr[lightAttkPoints])
+				#Server.send_attack(lightAttkArr[lightAttkPoints])
 				anim.queue(lightAttkArr[lightAttkPoints])
 			lightAttkPoints = lightAttkPoints + 1
 	elif type == "heavy_attack":
@@ -80,13 +75,15 @@ func handle_ground_animation():
 		play_anim("FallDown")
 
 func handle_block_animation():
-	pass
+	charDet.actionState.set_currState("BUSY")
+	play_anim("RaiseBlock")
 	
 func handle_specials_animation():
 	pass
 	
 func handle_knockback_animation():
 	anim.clear_queue()
+	play_anim("LightDamage")
 	pass
 
 func timer_timeout():

@@ -54,6 +54,9 @@ singletons=[  ]
 [global]
 
 phys=false
+v=false
+vsync=false
+"v sync"=false
 
 [input]
 
