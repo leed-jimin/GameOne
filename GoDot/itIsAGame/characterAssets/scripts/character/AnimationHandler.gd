@@ -5,7 +5,7 @@ class_name AnimationHandler
 onready var anim = get_node("../AnimationPlayer")
 onready var timer = get_node("../Timer")
 onready var charDet = get_node("../CharacterDetails")
-
+onready var animTree = get_node("../AnimationTree")
 #these will be loaded from playerdetails
 var lightAttkPoints = 0
 var heavyAttkPoints = 0
@@ -18,31 +18,45 @@ var heavyAttkArr = ["lFrontKick"]
 var lightAirArr = ["elbow_r_aerial"] #will be loaded from details later
 var heavyAirArr = []
 #these will be loaded from playerdetails
+enum BinaryState {
+	YES = 0,
+	NO = 1,
+}
+
+enum ActionTransition {
+	ATTACK = 0,
+	DAMAGE = 1,
+}
 
 func _ready():
-	anim.get_animation("Walking").set_loop(true)
-	anim.get_animation("Idle").set_loop(true)
-	anim.get_animation("Running").set_loop(true)
+	anim.get_animation("walking").set_loop(true)
+	anim.get_animation("idle").set_loop(true)
+	anim.get_animation("running").set_loop(true)
+	animTree.active = true
 
 func handle_aerial_movement_animation(grounded, moveVec, justJumped, yVelo):
 	if justJumped:
-		play_anim("JumpUp")
+		animTree.set("parameters/isAction/current", BinaryState.NO)
+		animTree.set("parameters/onGround/current", BinaryState.NO) #only takes ints lol...
 	elif charDet.geoState.get_currState() == 1 and charDet.actionState.get_currState() == 0 and grounded:
 		#TODO fix this i think
 		print("fall")
-		handle_ground_animation()
 	elif grounded:
+		animTree.set("parameters/onGround/current", BinaryState.YES)
 		if moveVec.x == 0 and moveVec.z == 0:
-			play_anim("Idle")
+			#set_to_idle()
+			pass
 		else:
-			play_anim("Walking")
+			animTree.set("parameters/movement/blend_amount", 0)
 	
 func handle_attack_animation(type):
 	charDet.actionState.set_currState("ATTACKING")
+	var animNode = animTree.tree_root.get_node("lightAttack")
+	print(animNode)
 	if type == "light_attack":
 		if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
 			timer.start()
-			play_anim(lightAirArr[0])
+			animTree.set("parameters/isAirAction/current", BinaryState.YES)
 		else:
 			lightAttkPoints = lightAttkPoints % (lightAttkArr.size())
 			timer.wait_time = lightWaitTime
@@ -66,13 +80,6 @@ func handle_attack_animation(type):
 			elif heavyAttkPoints != heavyAttkArr.size() && anim.get_queue().size() == 0:
 				anim.queue(heavyAttkArr[heavyAttkPoints])
 			heavyAttkPoints = heavyAttkPoints + 1
-
-func handle_ground_animation():
-	if charDet.actionState.get_currState() == 0:
-		charDet.actionState.set_currState("BUSY")
-		timer.wait_time = .4
-		timer.start()
-		play_anim("FallDown")
 
 func handle_block_animation():
 	charDet.actionState.set_currState("BUSY")
@@ -99,10 +106,11 @@ func play_anim(name):
 	
 func set_to_idle():
 	if charDet.geoState.get_currState() == 0: #ground
-		play_anim("Idle")
+		animTree.set("parameters/movement/blend_amount", -1);
+#		animTree.set("parameters/onGround/current", "yes");
+#		animTree.set("parameters/isAction/current", "no");
+		charDet.actionState.set_currState("NONE")
 
-	charDet.actionState.set_currState("NONE")
-	
 func on_hit(damage):
 	anim.play("lightDamage")
 
@@ -120,32 +128,8 @@ func _on_lHandHB_body_entered(body):
 			print("hit")
 			#Server.send_character_hit(body.name, get_node("../rig/Skeleton/leftHandBone").global_transform.origin, body.transform.origin)
 
-
 func _on_rHandHB_body_entered(body):
 	if charDet.actionState.get_currState() == 2:
 		if body.is_in_group("OtherPlayers") or body.is_in_group("Enemies"):
 			#Server.send_character_hit(get_parent().transform.origin, get_node("../rig/Skeleton/rightHandBone").global_transform.origin, body.transform.origin)
 			pass
-
-func _on_lFootHB_body_entered(body):
-	pass # Replace with function body.
-
-
-func _on_rFootHB_body_entered(body):
-	pass # Replace with function body.
-
-
-func _on_lUpperArmHB_body_entered(body):
-	pass # Replace with function body.
-
-
-func _on_rUpperArmHB_body_entered(body):
-	pass # Replace with function body.
-
-
-func _on_lThighHB_body_entered(body):
-	pass # Replace with function body.
-
-
-func _on_rThighHB_body_entered(body):
-	pass # Replace with function body.

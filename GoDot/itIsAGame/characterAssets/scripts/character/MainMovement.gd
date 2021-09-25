@@ -14,13 +14,13 @@ var up
 var down
 
 var yVelo = 0
-var grounded = is_on_floor()
+var grounded
 var moveVec = Vector3()
 var justJumped = false
 var playerState
 
 var currentHp = 100
-
+var inputBuffer = []
 #TODO use the position of bone to detect collision on server side
 func _ready():
 	pass
@@ -116,8 +116,8 @@ func define_player_state():
 	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin, "R": rotation_degrees}
 	Server.send_player_state(playerState)
 
-func _on_AnimationPlayer_animation_finished(animationName):
-	get_node("AnimationHandler").set_to_idle()
+#func _on_AnimationPlayer_animation_finished(animationName):
+#	get_node("AnimationHandler").set_to_idle()
 
 func _on_Timer_timeout():
 	get_node("AnimationHandler").timer_timeout() # Replace with function body.
