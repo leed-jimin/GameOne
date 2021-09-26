@@ -1,3 +1,8 @@
 # itIsAGame
-Making a Game
-- Not sure what's going on yet.
+Making a Game!
+
+TODO:
+- website maybe
+- movement with animTree
+- more items and attacks
+- more animations for events on character
