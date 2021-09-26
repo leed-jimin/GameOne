@@ -6,6 +6,7 @@ onready var anim = get_node("../AnimationPlayer")
 onready var timer = get_node("../Timer")
 onready var charDet = get_node("../CharacterDetails")
 onready var animTree = get_node("../AnimationTree")
+onready var inputBuffer = get_node("../InputBuffer")
 #these will be loaded from playerdetails
 var lightAttkPoints = 0
 var heavyAttkPoints = 0
@@ -34,18 +35,22 @@ func _ready():
 	anim.get_animation("running").set_loop(true)
 	animTree.active = true
 
-func handle_aerial_movement_animation(grounded, moveVec, justJumped, yVelo):
+func handle_aerial_movement_animation(grounded, moveVec, justJumped):
 	if justJumped:
+		animTree.set("parameters/jump-fall/current", 0)
 		animTree.set("parameters/isAction/current", BinaryState.NO)
 		animTree.set("parameters/onGround/current", BinaryState.NO) #only takes ints lol...
 	elif charDet.geoState.get_currState() == 1 and charDet.actionState.get_currState() == 0 and grounded:
 		#TODO fix this i think
-		print("fall")
+		animTree.set("parameters/actionType/current", 2)
+		animTree.set("parameters/isAction/current", BinaryState.YES)
 	elif grounded:
 		animTree.set("parameters/onGround/current", BinaryState.YES)
 		if moveVec.x == 0 and moveVec.z == 0:
-			#set_to_idle()
-			pass
+			set_to_idle()
+		elif inputBuffer.is_run_input() or animTree.get("parameters/movement/blend_amount") == 1:
+			animTree.set("parameters/movement/blend_amount", 1)
+			timer.start()
 		else:
 			animTree.set("parameters/movement/blend_amount", 0)
 	
@@ -97,6 +102,7 @@ func timer_timeout():
 	set_to_idle()
 	lightAttkPoints = 0
 	heavyAttkPoints = 0
+	inputBuffer.purge()
 	timer.stop()
 	
 func play_anim(name):
@@ -107,8 +113,6 @@ func play_anim(name):
 func set_to_idle():
 	if charDet.geoState.get_currState() == 0: #ground
 		animTree.set("parameters/movement/blend_amount", -1);
-#		animTree.set("parameters/onGround/current", "yes");
-#		animTree.set("parameters/isAction/current", "no");
 		charDet.actionState.set_currState("NONE")
 
 func on_hit(damage):

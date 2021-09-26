@@ -1,12 +1,25 @@
 extends KinematicBody
 
 onready var charDet = get_node("CharacterDetails")
+onready var inputBuffer = get_node("InputBuffer")
+onready var timer = get_node("Timer")
+onready var animTree = get_node("AnimationTree")
 
 const SPEED_WALK = 15
-const SPEED_RUN = 30
-const JUMP_FORCE = 60
+const SPEED_RUN = 20
+const JUMP_FORCE = 50
 const GRAVITY = 1.3
 const SPEED_MAX_FALL = -40
+enum InputType {
+	UP,
+	RIGHT,
+	DOWN,
+	LEFT,
+	JUMP,
+	LIGHT,
+	HEAVY,
+	TARGET,
+}
 
 var left
 var right
@@ -15,13 +28,12 @@ var down
 
 var yVelo = 0
 var grounded
-var moveVec = Vector3()
+var moveVec
 var justJumped = false
 var playerState
 
 var currentHp = 100
-var inputBuffer = []
-#TODO use the position of bone to detect collision on server side
+
 func _ready():
 	pass
 
@@ -32,11 +44,8 @@ func _physics_process(_delta):
 	up = Input.is_action_pressed("ui_up")
 	down = Input.is_action_pressed("ui_down")
 	grounded = is_on_floor()
-	
-	if grounded:
-		charDet.geoState.set_currState("GROUND")
-	else:
-		charDet.geoState.set_currState("AIR")
+
+	if not grounded:
 		yVelo -= GRAVITY
 		
 	moveVec = Vector3()
@@ -52,6 +61,7 @@ func _physics_process(_delta):
 			handle_rotation()
 			#Jump input
 			if Input.is_action_just_pressed("jump") && grounded:
+				inputBuffer.insert(InputType.JUMP)
 				justJumped = true
 				yVelo = JUMP_FORCE
 			elif grounded:
@@ -61,20 +71,25 @@ func _physics_process(_delta):
 				get_node("AnimationHandler").handle_block_animation()
 			#attacks / TODO need check for item
 			elif Input.is_action_just_pressed("light_attack"):
+				inputBuffer.insert(InputType.LIGHT)
 				get_node("AnimationHandler").handle_attack_animation("light_attack")
 			elif Input.is_action_just_pressed("heavy_attack"):
+				inputBuffer.insert(InputType.HEAVY)
 				get_node("AnimationHandler").handle_attack_animation("heavy_attack")
 
 		elif charDet.actionState.get_currState() == 2: #attacking
 			if Input.is_action_just_pressed("light_attack"):
+				inputBuffer.insert(InputType.LIGHT)
 				get_node("AnimationHandler").handle_attack_animation("light_attack")
 			if Input.is_action_just_pressed("heavy_attack"):
+				inputBuffer.insert(InputType.HEAVY)
 				get_node("AnimationHandler").handle_attack_animation("heavy_attack")
 			#Standard Attacks End
 	if charDet.actionState.get_currState() == charDet.actionState.get_states()["NONE"]:
-		get_node("AnimationHandler").handle_aerial_movement_animation(grounded, moveVec, justJumped, yVelo)
+		get_node("AnimationHandler").handle_aerial_movement_animation(grounded, moveVec, justJumped)
 	
 	move_and_slide_wrapper(moveVec)
+	store_movement_input()
 	#define_player_state()
 
 func handle_rotation():
@@ -108,7 +123,9 @@ func move_and_slide_wrapper(moveVec):
 	
 	if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
 		moveVec /= 1.5
-		
+	elif animTree.get("parameters/movement/blend_amount") == 1:
+		moveVec *= 2
+	
 	moveVec.y = yVelo
 	move_and_slide(moveVec, Vector3(0, 1, 0))
 
@@ -116,6 +133,20 @@ func define_player_state():
 	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin, "R": rotation_degrees}
 	Server.send_player_state(playerState)
 
+func store_movement_input():
+	if Input.is_action_just_pressed("ui_left"):
+		timer.start()
+		inputBuffer.insert(InputType.LEFT)
+	elif Input.is_action_just_pressed("ui_up"):
+		timer.start()
+		inputBuffer.insert(InputType.UP)
+	if Input.is_action_just_pressed("ui_right"):
+		timer.start()
+		inputBuffer.insert(InputType.RIGHT)
+	elif Input.is_action_just_pressed("ui_down"):
+		timer.start()
+		inputBuffer.insert(InputType.DOWN)
+		
 #func _on_AnimationPlayer_animation_finished(animationName):
 #	get_node("AnimationHandler").set_to_idle()
 
