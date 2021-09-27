@@ -38,40 +38,45 @@ func _ready():
 func handle_aerial_movement_animation(grounded, moveVec, justJumped):
 	if justJumped:
 		animTree.set("parameters/jump-fall/current", 0)
-		animTree.set("parameters/isAction/current", BinaryState.NO)
 		animTree.set("parameters/onGround/current", BinaryState.NO) #only takes ints lol...
-	elif charDet.geoState.get_currState() == 1 and charDet.actionState.get_currState() == 0 and grounded:
-		#TODO fix this i think
+	elif charDet.geoState.get_currState() == 1 and charDet.actionState.get_currState() == 0 and grounded: #landing anim
+		#TODO Fix later not urgent
 		animTree.set("parameters/actionType/current", 2)
 		animTree.set("parameters/isAction/current", BinaryState.YES)
 	elif grounded:
 		animTree.set("parameters/onGround/current", BinaryState.YES)
-		if moveVec.x == 0 and moveVec.z == 0:
+		if moveVec.x == 0 and moveVec.z == 0: #Idle
 			set_to_idle()
-		elif inputBuffer.is_run_input() or animTree.get("parameters/movement/blend_amount") == 1:
-			animTree.set("parameters/movement/blend_amount", 1)
+		elif inputBuffer.is_run_input() or animTree.get("parameters/movement/blend_amount") == 1: #run
 			timer.start()
+			animTree.set("parameters/movement/blend_amount", 1)
 		else:
-			animTree.set("parameters/movement/blend_amount", 0)
+			timer.start()
+			animTree.set("parameters/movement/blend_amount", 0) #walk
+	else: #falling
+		animTree.set("parameters/jump-fall/current", 1)
+		animTree.set("parameters/isAction/current", BinaryState.NO)
+		animTree.set("parameters/onGround/current", BinaryState.NO)
 	
 func handle_attack_animation(type):
-	charDet.actionState.set_currState("ATTACKING")
 	var animNode = animTree.tree_root.get_node("lightAttack")
-	print(animNode)
+
 	if type == "light_attack":
-		if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
-			timer.start()
+		if animTree.get("parameters/onGround/current") == BinaryState.NO:
 			animTree.set("parameters/isAirAction/current", BinaryState.YES)
 		else:
+			animTree.set("parameters/action/blend_amount", 0)
 			lightAttkPoints = lightAttkPoints % (lightAttkArr.size())
 			timer.wait_time = lightWaitTime
-			timer.start()
 			if lightAttkPoints == 0:
 				#Server.send_attack(lightAttkArr[lightAttkPoints])
-				play_anim(lightAttkArr[lightAttkPoints])
+#				play_anim(lightAttkArr[lightAttkPoints])
+				pass
 			elif lightAttkPoints != lightAttkArr.size() && anim.get_queue().size() == 0:
 				#Server.send_attack(lightAttkArr[lightAttkPoints])
-				anim.queue(lightAttkArr[lightAttkPoints])
+#				anim.queue(lightAttkArr[lightAttkPoints])
+				pass
+			animTree.set("parameters/isAction/current", BinaryState.YES)
 			lightAttkPoints = lightAttkPoints + 1
 	elif type == "heavy_attack":
 		if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
@@ -79,7 +84,6 @@ func handle_attack_animation(type):
 		else:
 			heavyAttkPoints = heavyAttkPoints % (heavyAttkArr.size())
 			timer.wait_time = heavyWaitTime
-			timer.start()
 			if heavyAttkPoints == 0:
 				play_anim(heavyAttkArr[heavyAttkPoints])
 			elif heavyAttkPoints != heavyAttkArr.size() && anim.get_queue().size() == 0:
@@ -87,7 +91,6 @@ func handle_attack_animation(type):
 			heavyAttkPoints = heavyAttkPoints + 1
 
 func handle_block_animation():
-	charDet.actionState.set_currState("BUSY")
 	play_anim("RaiseBlock")
 	
 func handle_specials_animation():
@@ -111,9 +114,7 @@ func play_anim(name):
 	anim.play(name)
 	
 func set_to_idle():
-	if charDet.geoState.get_currState() == 0: #ground
-		animTree.set("parameters/movement/blend_amount", -1);
-		charDet.actionState.set_currState("NONE")
+	animTree.set("parameters/movement/blend_amount", -1);
 
 func on_hit(damage):
 	anim.play("lightDamage")

@@ -4,12 +4,13 @@ onready var charDet = get_node("CharacterDetails")
 onready var inputBuffer = get_node("InputBuffer")
 onready var timer = get_node("Timer")
 onready var animTree = get_node("AnimationTree")
+onready var animHandler = get_node("AnimationHandler")
 
 const SPEED_WALK = 15
 const SPEED_RUN = 20
-const JUMP_FORCE = 50
-const GRAVITY = 1.3
-const SPEED_MAX_FALL = -40
+const JUMP_FORCE = 60
+const GRAVITY = 1.9
+const SPEED_MAX_FALL = -50
 enum InputType {
 	UP,
 	RIGHT,
@@ -48,11 +49,13 @@ func _physics_process(_delta):
 	if not grounded:
 		yVelo -= GRAVITY
 		
-	moveVec = Vector3()
-	
-	if yVelo < SPEED_MAX_FALL:
-		yVelo = SPEED_MAX_FALL
+		if yVelo < SPEED_MAX_FALL:
+			yVelo = SPEED_MAX_FALL
+	else: 
+		yVelo = -GRAVITY
 		
+	moveVec = Vector3()
+
 	if charDet.actionState.get_currState() != 1: #not busy
 		if charDet.actionState.get_currState() == 0: #None
 			#Directional movement
@@ -64,32 +67,30 @@ func _physics_process(_delta):
 				inputBuffer.insert(InputType.JUMP)
 				justJumped = true
 				yVelo = JUMP_FORCE
-			elif grounded:
-				yVelo = -0.1
 			#Block input
 			if Input.is_action_just_pressed("light_attack") and Input.is_action_just_pressed("heavy_attack"):
-				get_node("AnimationHandler").handle_block_animation()
+				animHandler.handle_block_animation()
 			#attacks / TODO need check for item
 			elif Input.is_action_just_pressed("light_attack"):
 				inputBuffer.insert(InputType.LIGHT)
-				get_node("AnimationHandler").handle_attack_animation("light_attack")
+				animHandler.handle_attack_animation("light_attack")
+				var velocity = ((transform * animTree.get_root_motion_transform()).origin - transform.origin) / .5
+				move_and_slide(velocity, Vector3.UP) #TODO move with animation
 			elif Input.is_action_just_pressed("heavy_attack"):
 				inputBuffer.insert(InputType.HEAVY)
-				get_node("AnimationHandler").handle_attack_animation("heavy_attack")
+				animHandler.handle_attack_animation("heavy_attack")
 
 		elif charDet.actionState.get_currState() == 2: #attacking
 			if Input.is_action_just_pressed("light_attack"):
 				inputBuffer.insert(InputType.LIGHT)
-				get_node("AnimationHandler").handle_attack_animation("light_attack")
+				animHandler.handle_attack_animation("light_attack")
 			if Input.is_action_just_pressed("heavy_attack"):
 				inputBuffer.insert(InputType.HEAVY)
-				get_node("AnimationHandler").handle_attack_animation("heavy_attack")
+				animHandler.handle_attack_animation("heavy_attack")
 			#Standard Attacks End
-	if charDet.actionState.get_currState() == charDet.actionState.get_states()["NONE"]:
-		get_node("AnimationHandler").handle_aerial_movement_animation(grounded, moveVec, justJumped)
-	
-	move_and_slide_wrapper(moveVec)
 	store_movement_input()
+	animHandler.handle_aerial_movement_animation(grounded, moveVec, justJumped)
+	move_and_slide_wrapper(moveVec)
 	#define_player_state()
 
 func handle_rotation():
@@ -118,7 +119,7 @@ func rotate_model(rotationVector):
 
 func move_and_slide_wrapper(moveVec):
 	moveVec = moveVec.normalized()
-	moveVec = moveVec.rotated(Vector3(0, 1, 0), rotation.y)
+	moveVec = moveVec.rotated(Vector3.UP, rotation.y)
 	moveVec *= SPEED_WALK
 	
 	if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
@@ -127,7 +128,7 @@ func move_and_slide_wrapper(moveVec):
 		moveVec *= 2
 	
 	moveVec.y = yVelo
-	move_and_slide(moveVec, Vector3(0, 1, 0))
+	move_and_slide(moveVec, Vector3.UP, true)
 
 func define_player_state():
 	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin, "R": rotation_degrees}
@@ -135,20 +136,10 @@ func define_player_state():
 
 func store_movement_input():
 	if Input.is_action_just_pressed("ui_left"):
-		timer.start()
 		inputBuffer.insert(InputType.LEFT)
 	elif Input.is_action_just_pressed("ui_up"):
-		timer.start()
 		inputBuffer.insert(InputType.UP)
 	if Input.is_action_just_pressed("ui_right"):
-		timer.start()
 		inputBuffer.insert(InputType.RIGHT)
 	elif Input.is_action_just_pressed("ui_down"):
-		timer.start()
 		inputBuffer.insert(InputType.DOWN)
-		
-#func _on_AnimationPlayer_animation_finished(animationName):
-#	get_node("AnimationHandler").set_to_idle()
-
-func _on_Timer_timeout():
-	get_node("AnimationHandler").timer_timeout() # Replace with function body.
