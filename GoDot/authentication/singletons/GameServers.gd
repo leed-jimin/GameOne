@@ -11,7 +11,7 @@ var gameServerList = {}
 func _ready():
 	start_server()
 	
-func _process(delta):
+func _process(_delta):
 	if not custom_multiplayer.has_network_peer():
 		return
 	custom_multiplayer.poll()

@@ -43,7 +43,6 @@ func _on_connection_succeeded():
 	
 func _on_connection_failed():
 	print("connection fail")
-	get_node("/root/SceneHandler/MainScreen/Background/Login/LoginButton").disabled = false
 	#reenable everything
 
 func request_login():

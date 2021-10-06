@@ -7,7 +7,7 @@ onready var lobby = load("res://GUI/scenes/Lobby.tscn")
 onready var game = load("res://main/SceneHandler.tscn")
 
 func _ready():
-	#load_login_screen()
+#	load_login_screen()
 	load_game() #for testing animations
 
 func load_login_screen():

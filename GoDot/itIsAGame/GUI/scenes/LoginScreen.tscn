@@ -50,7 +50,7 @@ __meta__ = {
 }
 
 [node name="Title" type="Label" parent="Background/Login"]
-margin_right = 612.0
+margin_right = 509.0
 margin_bottom = 36.0
 custom_fonts/font = SubResource( 2 )
 text = "The Title"
@@ -58,42 +58,43 @@ align = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="Background/Login"]
 margin_top = 40.0
-margin_right = 612.0
+margin_right = 509.0
 margin_bottom = 85.0
 rect_min_size = Vector2( 0, 45 )
 
 [node name="Username" type="Label" parent="Background/Login"]
 margin_top = 89.0
-margin_right = 612.0
+margin_right = 509.0
 margin_bottom = 103.0
 text = "Username"
 
 [node name="UsernameEdit" type="LineEdit" parent="Background/Login"]
 margin_top = 107.0
-margin_right = 612.0
+margin_right = 509.0
 margin_bottom = 131.0
 
 [node name="Password" type="Label" parent="Background/Login"]
 margin_top = 135.0
-margin_right = 612.0
+margin_right = 509.0
 margin_bottom = 149.0
 text = "Password"
 
 [node name="PasswordEdit" type="LineEdit" parent="Background/Login"]
 margin_top = 153.0
-margin_right = 612.0
+margin_right = 509.0
 margin_bottom = 177.0
+secret = true
 
 [node name="MarginContainer2" type="MarginContainer" parent="Background/Login"]
 margin_top = 181.0
-margin_right = 612.0
+margin_right = 509.0
 margin_bottom = 226.0
 rect_min_size = Vector2( 200, 45 )
 
 [node name="LoginButton" type="TextureButton" parent="Background/Login"]
-margin_left = 220.0
+margin_left = 168.0
 margin_top = 230.0
-margin_right = 392.0
+margin_right = 340.0
 margin_bottom = 289.0
 size_flags_horizontal = 4
 texture_normal = ExtResource( 1 )
@@ -113,9 +114,9 @@ __meta__ = {
 }
 
 [node name="CreateAccount" type="TextureButton" parent="Background/Login"]
-margin_left = 220.0
+margin_left = 168.0
 margin_top = 293.0
-margin_right = 392.0
+margin_right = 340.0
 margin_bottom = 352.0
 size_flags_horizontal = 4
 texture_normal = ExtResource( 1 )

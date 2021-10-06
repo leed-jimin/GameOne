@@ -5,6 +5,7 @@ onready var inputBuffer = get_node("InputBuffer")
 onready var timer = get_node("Timer")
 onready var animTree = get_node("AnimationTree")
 onready var animHandler = get_node("AnimationHandler")
+onready var player_model = $rig
 
 const SPEED_WALK = 15
 const SPEED_RUN = 20
@@ -27,6 +28,8 @@ var right
 var up
 var down
 
+var orientation = Transform()
+var root_motion = Transform()
 var yVelo = 0
 var grounded
 var moveVec
@@ -36,16 +39,18 @@ var playerState
 var currentHp = 100
 
 func _ready():
+	orientation = player_model.global_transform
+	orientation.origin = Vector3()
 	pass
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	justJumped = false
 	left = Input.is_action_pressed("ui_left")
 	right = Input.is_action_pressed("ui_right")
 	up = Input.is_action_pressed("ui_up")
 	down = Input.is_action_pressed("ui_down")
 	grounded = is_on_floor()
-
+#	print(animTree.get_root_motion_transform().origin)
 	if not grounded:
 		yVelo -= GRAVITY
 		
@@ -74,8 +79,6 @@ func _physics_process(_delta):
 			elif Input.is_action_just_pressed("light_attack"):
 				inputBuffer.insert(InputType.LIGHT)
 				animHandler.handle_attack_animation("light_attack")
-				var velocity = ((transform * animTree.get_root_motion_transform()).origin - transform.origin) / .5
-				move_and_slide(velocity, Vector3.UP) #TODO move with animation
 			elif Input.is_action_just_pressed("heavy_attack"):
 				inputBuffer.insert(InputType.HEAVY)
 				animHandler.handle_attack_animation("heavy_attack")
@@ -88,10 +91,23 @@ func _physics_process(_delta):
 				inputBuffer.insert(InputType.HEAVY)
 				animHandler.handle_attack_animation("heavy_attack")
 			#Standard Attacks End
+	#THIS BLOCK NEEDS TO BE FIXED
+	root_motion = animTree.get_root_motion_transform()
+	orientation *= root_motion
+	var h_velocity = orientation.origin / delta
+	moveVec.x = h_velocity.x
+	moveVec.z = h_velocity.z
+#	moveVec += GRAVITY * delta
+	moveVec = move_and_slide(moveVec, Vector3.UP)
+	orientation.origin = Vector3() # Clear accumulated root motion displacement (was applied to speed).
+	orientation = orientation.orthonormalized() # Orthonormalize orientation.
+
+#	player_model.global_transform.basis = orientation.basis
+# THIS BLOCK ABOVE NEEDS TO BE FIXED
 	store_movement_input()
 	animHandler.handle_aerial_movement_animation(grounded, moveVec, justJumped)
 	move_and_slide_wrapper(moveVec)
-	#define_player_state()
+#	define_player_state()
 
 func handle_rotation():
 	if left:

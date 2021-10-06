@@ -45,6 +45,7 @@ func handle_aerial_movement_animation(grounded, moveVec, justJumped):
 		animTree.set("parameters/isAction/current", BinaryState.YES)
 	elif grounded:
 		animTree.set("parameters/onGround/current", BinaryState.YES)
+		animTree.set("parameters/isAirAction/current", BinaryState.NO)
 		if moveVec.x == 0 and moveVec.z == 0: #Idle
 			set_to_idle()
 		elif inputBuffer.is_run_input() or animTree.get("parameters/movement/blend_amount") == 1: #run
@@ -64,6 +65,9 @@ func handle_attack_animation(type):
 	if type == "light_attack":
 		if animTree.get("parameters/onGround/current") == BinaryState.NO:
 			animTree.set("parameters/isAirAction/current", BinaryState.YES)
+			print("here")
+			var velocity = animTree.get_root_motion_transform().origin * 300
+			get_node("../../characterModel").move_and_slide(velocity, Vector3.UP) #TODO move with animation
 		else:
 			animTree.set("parameters/action/blend_amount", 0)
 			lightAttkPoints = lightAttkPoints % (lightAttkArr.size())
