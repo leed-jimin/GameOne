@@ -1,7 +1,7 @@
 extends Node
 
 var playerStats = preload("res://main/userDetails/PlayerStats.tscn")
-var characterModel = preload("res://characterAssets/scenes/characterModel.tscn")
+var player = preload("res://characterAssets/scenes/Player.tscn")
 var characterTemplate = preload("res://characterAssets/scenes/characterTemplate.tscn")
 var enemyModel = preload("res://characterAssets/scenes/enemyTemplate.tscn")
 
@@ -14,7 +14,7 @@ func _ready():
 	pass
 	
 func spawn_user_player():
-	var model = characterModel.instance()
+	var model = player.instance()
 	model.transform.origin = Vector3(0, 10, 0)
 	add_child(model)
 	$Camera.set_target(model.get_node("CameraLocation"))

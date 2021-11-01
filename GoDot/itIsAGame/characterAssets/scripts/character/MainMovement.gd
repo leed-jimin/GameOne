@@ -1,16 +1,16 @@
 extends KinematicBody
 
-onready var charDet = get_node("CharacterDetails")
-onready var inputBuffer = get_node("InputBuffer")
-onready var timer = get_node("Timer")
-onready var animTree = get_node("AnimationTree")
-onready var animHandler = get_node("AnimationHandler")
-onready var player_model = $rig
+onready var characterDetails = $CharacterDetails
+onready var inputBuffer = $InputBuffer
+onready var timer = $Timer
+onready var animationHandler = $CharacterModel/AnimationHandler
+onready var animationTree = $CharacterModel/AnimationTree
+onready var CharacterModel = $CharacterModel
 
-const SPEED_WALK = 15
-const SPEED_RUN = 20
-const JUMP_FORCE = 60
-const GRAVITY = 1.9
+const SPEED_WALK = 4
+const SPEED_RUN = 14
+const JUMP_FORCE = 40
+const GRAVITY = 1.4
 const SPEED_MAX_FALL = -50
 enum InputType {
 	UP,
@@ -39,9 +39,8 @@ var playerState
 var currentHp = 100
 
 func _ready():
-	orientation = player_model.global_transform
+	orientation = global_transform
 	orientation.origin = Vector3()
-	pass
 
 func _physics_process(delta):
 	justJumped = false
@@ -50,7 +49,7 @@ func _physics_process(delta):
 	up = Input.is_action_pressed("ui_up")
 	down = Input.is_action_pressed("ui_down")
 	grounded = is_on_floor()
-#	print(animTree.get_root_motion_transform().origin)
+
 	if not grounded:
 		yVelo -= GRAVITY
 		
@@ -61,51 +60,51 @@ func _physics_process(delta):
 		
 	moveVec = Vector3()
 
-	if charDet.actionState.get_currState() != 1: #not busy
-		if charDet.actionState.get_currState() == 0: #None
-			#Directional movement
-			moveVec.x = int(right) - int(left)
-			moveVec.z = int(down) - int(up)
-			handle_rotation()
-			#Jump input
-			if Input.is_action_just_pressed("jump") && grounded:
-				inputBuffer.insert(InputType.JUMP)
-				justJumped = true
-				yVelo = JUMP_FORCE
-			#Block input
-			if Input.is_action_just_pressed("light_attack") and Input.is_action_just_pressed("heavy_attack"):
-				animHandler.handle_block_animation()
-			#attacks / TODO need check for item
-			elif Input.is_action_just_pressed("light_attack"):
-				inputBuffer.insert(InputType.LIGHT)
-				animHandler.handle_attack_animation("light_attack")
-			elif Input.is_action_just_pressed("heavy_attack"):
-				inputBuffer.insert(InputType.HEAVY)
-				animHandler.handle_attack_animation("heavy_attack")
+	if animationTree.is_idle(): #None
+		#Directional movement
+		moveVec.x = int(right) - int(left)
+		moveVec.z = int(down) - int(up)
+		handle_rotation()
+		#Jump input
+		if Input.is_action_just_pressed("jump") && grounded:
+			inputBuffer.insert(InputType.JUMP)
+			justJumped = true
+			yVelo = JUMP_FORCE
+		#Block input
+		if Input.is_action_just_pressed("light_attack") and Input.is_action_just_pressed("heavy_attack"):
+			animationHandler.handle_block_animation()
+		#attacks / TODO need check for item
+		elif Input.is_action_just_pressed("light_attack"):
+			inputBuffer.insert(InputType.LIGHT)
+			animationHandler.handle_attack_animation("light_attack")
+		elif Input.is_action_just_pressed("heavy_attack"):
+			inputBuffer.insert(InputType.HEAVY)
+			animationHandler.handle_attack_animation("heavy_attack")
 
-		elif charDet.actionState.get_currState() == 2: #attacking
-			if Input.is_action_just_pressed("light_attack"):
-				inputBuffer.insert(InputType.LIGHT)
-				animHandler.handle_attack_animation("light_attack")
-			if Input.is_action_just_pressed("heavy_attack"):
-				inputBuffer.insert(InputType.HEAVY)
-				animHandler.handle_attack_animation("heavy_attack")
-			#Standard Attacks End
+	elif animationTree.is_attacking(): #attacking
+		if Input.is_action_just_pressed("light_attack"):
+			inputBuffer.insert(InputType.LIGHT)
+			animationHandler.handle_attack_animation("light_attack")
+		if Input.is_action_just_pressed("heavy_attack"):
+			inputBuffer.insert(InputType.HEAVY)
+			animationHandler.handle_attack_animation("heavy_attack")
+		#Standard Attacks End
 	#THIS BLOCK NEEDS TO BE FIXED
-	root_motion = animTree.get_root_motion_transform()
-	orientation *= root_motion
-	var h_velocity = orientation.origin / delta
-	moveVec.x = h_velocity.x
-	moveVec.z = h_velocity.z
+#	root_motion = animationTree.get_root_motion_transform()
+#	print(root_motion)
+#	orientation *= root_motion
+#	var h_velocity = orientation.origin / delta
+#	moveVec.x = h_velocity.x
+#	moveVec.z = h_velocity.z
 #	moveVec += GRAVITY * delta
-	moveVec = move_and_slide(moveVec, Vector3.UP)
-	orientation.origin = Vector3() # Clear accumulated root motion displacement (was applied to speed).
-	orientation = orientation.orthonormalized() # Orthonormalize orientation.
+
+#	orientation.origin = Vector3() # Clear accumulated root motion displacement (was applied to speed).
+#	orientation = orientation.orthonormalized() # Orthonormalize orientation.
 
 #	player_model.global_transform.basis = orientation.basis
 # THIS BLOCK ABOVE NEEDS TO BE FIXED
 	store_movement_input()
-	animHandler.handle_aerial_movement_animation(grounded, moveVec, justJumped)
+	animationHandler.handle_aerial_movement_animation(grounded, moveVec, justJumped)
 	move_and_slide_wrapper(moveVec)
 #	define_player_state()
 
@@ -130,18 +129,17 @@ func handle_rotation():
 		rotate_model(Vector3(0, 0, 0))
 
 func rotate_model(rotationVector):
-	get_node("rig").rotation_degrees = rotationVector
-	get_node("CollisionShape").rotation_degrees = rotationVector
+	CharacterModel.rotation_degrees = rotationVector
 
 func move_and_slide_wrapper(moveVec):
 	moveVec = moveVec.normalized()
 	moveVec = moveVec.rotated(Vector3.UP, rotation.y)
 	moveVec *= SPEED_WALK
 	
-	if charDet.geoState.get_currState() == charDet.geoState.get_states()["AIR"]:
+	if animationTree.is_idle_air():
 		moveVec /= 1.5
-	elif animTree.get("parameters/movement/blend_amount") == 1:
-		moveVec *= 2
+	elif animationTree.get("parameters/movement/blend_amount") == 1:
+		moveVec *= 2.5
 	
 	moveVec.y = yVelo
 	move_and_slide(moveVec, Vector3.UP, true)
