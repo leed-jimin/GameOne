@@ -2,11 +2,11 @@ extends Node
 
 class_name AnimationHandler
 
-onready var animationPlayer = get_node("../AnimationPlayer")
-onready var timer = get_node("../../Timer")
-onready var characterDetails = get_node("../../CharacterDetails")
-onready var animationTree = get_node("../AnimationTree")
-onready var inputBuffer = get_node("../../InputBuffer")
+onready var animationPlayer = get_node("../CharacterModel/AnimationPlayer")
+onready var timer = get_node("../Timer")
+onready var characterDetails = get_node("../CharacterDetails")
+onready var animationTree = get_node("../CharacterModel/AnimationTree")
+onready var inputBuffer = get_node("../InputBuffer")
 #these will be loaded from playerdetails
 var lightAttkPoints = 0
 var heavyAttkPoints = 0
@@ -56,6 +56,7 @@ func handle_attack_animation(type):
 
 	if type == "light_attack":
 		if animationTree.get("parameters/onGround/current") == YN.NO:
+			animationTree.tree_root.get_node("airAction_attack").set_animation("r_l_aerialElbow")
 			animationTree.set("parameters/isAirAction/current", YN.YES)
 		else:
 			animNode.set_animation("lJab")
@@ -74,8 +75,9 @@ func handle_attack_animation(type):
 			animationTree.set("parameters/isAction/current", YN.YES)
 		animationTree.set("parameters/actionType/current", Globals.ActionState.ATTACK)
 	elif type == "heavy_attack":
-		if animationTree.is_in_air():
-			pass
+		if animationTree.get("parameters/onGround/current") == YN.NO:
+			animationTree.tree_root.get_node("airAction_attack").set_animation("flyingKick")
+			animationTree.set("parameters/isAirAction/current", YN.YES)
 		else:
 			animNode.set_animation("lFrontKick")
 			heavyAttkPoints = heavyAttkPoints % (heavyAttkArr.size())
