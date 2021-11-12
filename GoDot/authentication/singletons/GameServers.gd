@@ -5,7 +5,7 @@ var gatewayApi = MultiplayerAPI.new()
 var port = 1912
 const MAX_PLAYERS = 10
 var serverCount = 0
-var gameServerList = {}
+var gameServerList = []
 
 
 func _ready():
@@ -21,19 +21,20 @@ func start_server():
 	set_custom_multiplayer(gatewayApi)
 	custom_multiplayer.set_root_node(self)
 	custom_multiplayer.set_network_peer(network)
-	print("AU:GameServerHub started")
+	Log.DEBUG("GameServerHub started")
 	
 	network.connect("peer_connected", self, "_peer_connected")
 	network.connect("peer_disconnected", self, "_peer_disconnected")
 	
 func _peer_connected(gameServerId):
-	print("AU:gameServer connected: " + str(gameServerId))
-	gameServerList["GameServer" + str(serverCount)] = gameServerId
+	Log.INFO("gameServer connected: " + str(gameServerId))
+	gameServerList.append(gameServerId) 
 	serverCount += 1
-	print(gameServerList)
+	Log.DEBUG(gameServerList)
 	
 func _peer_disconnected(gameServerId):
-	print("AU:gameServer disconnected: " + str(gameServerId))
+	Log.INFO("gameServer disconnected: " + str(gameServerId))
+	gameServerList.remove(gameServerId)
 
 func distribute_login_token(token, gameServer):
 	var gameServerPeerId = gameServerList[gameServer]

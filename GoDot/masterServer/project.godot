@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="MasterServer"
-run/main_scene="res://main/scenes/MasterServer.tscn"
+run/main_scene="res://main/MasterServer.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -19,6 +19,7 @@ config/icon="res://icon.png"
 HubConnection="*res://main/instances/HubConnection.gd"
 LobbyHandler="*res://main/instances/LobbyHandler.gd"
 ServerData="*res://main/instances/ServerData.gd"
+Log="*res://main/instances/Log.gd"
 
 [physics]
 

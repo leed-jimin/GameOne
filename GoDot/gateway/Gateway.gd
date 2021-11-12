@@ -24,19 +24,19 @@ func start_server():
 	set_custom_multiplayer(gatewayApi)
 	custom_multiplayer.set_root_node(self)
 	custom_multiplayer.set_network_peer(network)
-	print("GW:gateway Server started!")
+	Log.DEBUG("gateway server started!")
 	
 	network.connect("peer_connected", self, "_on_peer_connected")
 	network.connect("peer_disconnected", self, "_on_peer_disconnected")
 	
 func _on_peer_connected(playerId):
-	print("GW:peer connected")
+	Log.INFO("peer connected: " + str(playerId))
 	
 func _on_peer_disconnected(playerId):
-	print("GW:peer disconnected")
+	Log.INFO("peer disconnected: " + str(playerId))
 	
 remote func login_request(username, password):
-	print("GW:Login request recieved")
+	Log.INFO("login request recieved")
 	var playerId = custom_multiplayer.get_rpc_sender_id()
 	Authenticate.authenticate_player(username, password, playerId)
 	
@@ -45,14 +45,14 @@ func return_login_request(result, playerId, token):
 	network.disconnect_peer(playerId)
 
 remote func create_account_request(username, password):
-	print("Create account request received")
+	Log.DEBUG("create account request received")
 	var playerId = custom_multiplayer.get_rpc_sender_id()
 	var valid = true
 	if username == null:
-		print("Please provide a valid username.")
+		Log.ERROR("Please provide a valid username.")
 		valid = false
 	if password == null:
-		print("Please provide a valid password.")
+		Log.ERROR("Please provide a valid password.")
 		valid = false
 	#need extra handling
 	if valid:

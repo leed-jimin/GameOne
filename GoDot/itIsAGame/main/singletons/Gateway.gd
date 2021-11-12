@@ -46,7 +46,7 @@ func _on_connection_succeeded():
 	
 func _on_connection_failed():
 	print("connection fail")
-	get_node("/root/SceneHandler/MainScreen/Background/Login/LoginButton").disabled = false
+	get_node("/root/Main/LoginScreen/Background/Login/LoginButton").disabled = false
 	#reenable everything
 
 func request_login():
@@ -62,7 +62,7 @@ remote func return_login_request(results, token):
 		Server.connect_to_server()
 	else:
 		print("Please provide correct username and password")
-		get_node("/root/SceneHandler/MainScreen/Background/Login/LoginButton").disabled = false
+		get_node("/root/Main/LoginScreen/Background/Login/LoginButton").disabled = false
 		#any other handling
 	network.disconnect("connection_succeeded", self, "_on_connection_succeeded")
 	network.disconnect("connection_failed", self, "_on_connection_failed")

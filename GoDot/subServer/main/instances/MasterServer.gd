@@ -29,6 +29,7 @@ func connect_to_server():
 	network.connect("connection_failed", self, "_on_connection_failed")
 
 remote func connect_to_other(otherPort):
+	Log.DEBUG("connecting to different server:" + str(otherPort))
 	get_tree().network_peer = null
 	network.create_client(ip, otherPort)
 	get_tree().set_network_peer(network)
@@ -48,7 +49,7 @@ func _on_connection_succeeded():
 	
 	
 func _on_connection_failed():
-	print("server: connection fail")
+	Log.ERROR("connection to masterserver failed")
 
 func determine_latency():
 	rpc_id(1, "determine_latency", OS.get_system_time_msecs())
@@ -153,7 +154,3 @@ remote func receive_hit(playerId, damage):
 	else:
 		print("other got hit")
 		get_node("/root/SceneHandler/YSort/OtherPlayers/" + str(playerId)).on_hit(damage);
-
-#server calls for player info
-func fetch_player_inventory():
-	rpc_id(1, "fetch_player_inventory")

@@ -11,13 +11,13 @@ config_version=4
 [application]
 
 config/name="Gateway"
-run/main_scene="res://LoginServer.tscn"
+run/main_scene="res://Gateway.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
 Authenticate="*res://singletons/Authenticate.gd"
-Gateway="*res://singletons/Gateway.gd"
+Log="*res://singletons/Log.gd"
 
 [physics]
 

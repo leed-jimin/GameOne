@@ -16,20 +16,20 @@ func _ready():
 func start_server():
 	network.create_server(port, MAX_PLAYERS)
 	get_tree().set_network_peer(network)
-	print("Server started!")
+	Log.DEBUG("master server started!")
 	
 	network.connect("peer_connected", self, "_peer_connected")
 	network.connect("peer_disconnected", self, "_peer_disconnected")
 
 
-func _peer_connected(playerId):
-	print("connected Id: " + String(playerId))
-	playerVerificationProcess.start(playerId)
+func _peer_connected(clientId):
+	print("connected Id: " + String(clientId))
+	playerVerificationProcess.start(clientId)
 	
-func _peer_disconnected(playerId):
-	print("disconnected Id: " + String(playerId))
-	if has_node(str(playerId)):
-		get_node(str(playerId)).queue_free()
+func _peer_disconnected(clientId):
+	print("disconnected Id: " + String(clientId))
+	if has_node(str(clientId)):
+		get_node(str(clientId)).queue_free()
 		#playerStateCollection.erase(playerId)
 		#get_node("GameLogic").playerList.erase(playerId)
 		#rpc_id(0, "despawn_player", playerId)
@@ -54,6 +54,7 @@ remote func return_token(token):
 	playerVerificationProcess.verify(playerId, token)
 
 func return_token_verification_results(playerId, result):
+	Log.DEBUG("token results received")
 	rpc_id(playerId, "return_token_verification_results", result)
 #	if result == true:
 #		rpc_id(0, "spawn_new_player", playerId, Vector3(0, 20, 0))

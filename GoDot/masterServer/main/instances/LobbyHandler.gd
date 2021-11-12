@@ -3,6 +3,12 @@ extends Node
 var lobbyDict = {}
 var lobbyCount = 0; # this will have to change so that gameId can be the same
 onready var server = get_node("/root/Server")
+const LobbyState = {
+	OPEN = "Open",
+	FULL = "Full",
+	INGAME = "In Game",
+	ENDING = "Ending",
+}
 #onready var stateProcessing = load("res://main/scenes/StateProcessing.tscn")
 
 func _ready():
@@ -14,7 +20,7 @@ func update_lobbies():
 
 func create_lobby(playerId):
 	lobbyCount += 1
-	lobbyDict[lobbyCount] = {"MaxPlayers": 8, "State": "Open", "Members": [playerId]}
+	lobbyDict[lobbyCount] = {"MaxPlayers": 8, "State": LobbyState.OPEN, "Members": [playerId]}
 	print(lobbyDict)
 	server.lobby_created(lobbyCount)
 

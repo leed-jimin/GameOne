@@ -10,6 +10,7 @@ script = ExtResource( 1 )
 
 [node name="underground_arena3" parent="." instance=ExtResource( 2 )]
 transform = Transform( 0.00316421, -0.0694929, 0.997577, -0.998272, -0.0587521, -0.000926359, 0.0586742, -0.995851, -0.0695588, -9.31741, -15.4339, 18.2379 )
+visible = false
 
 [node name="underground_arena2" parent="." instance=ExtResource( 2 )]
 transform = Transform( 0.979712, 0.200411, 0, -0.200411, 0.979712, 0, 0, 0, 1, 40.3936, 0, 4.67738 )

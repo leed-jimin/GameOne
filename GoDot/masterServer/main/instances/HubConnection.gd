@@ -22,17 +22,17 @@ func connect_to_server():
 	set_custom_multiplayer(gatewayApi)
 	custom_multiplayer.set_root_node(self)
 	custom_multiplayer.set_network_peer(network)
-	print("HubConnection started!")
+	Log.DEBUG("GameServerHubConnection started!")
 	
 	network.connect("connection_succeeded", self, "_on_connection_succeeded")
 	network.connect("connection_failed", self, "_on_connection_failed")
-	
 
 func _on_connection_succeeded():
-	print("connection success")
+	Log.INFO("GameServerHubConnection success")
 	
 func _on_connection_failed():
-	print("connection fail")
+	Log.INFO("GameServerHubConnection fail")
 
 remote func receive_login_token(token):
+	Log.DEBUG("login token received")
 	gameServer.expectedTokens.append(token)

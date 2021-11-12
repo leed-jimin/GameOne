@@ -5,6 +5,7 @@ var gatewayApi = MultiplayerAPI.new()
 var ip = "127.0.0.1"
 var port = 1910
 var cert = load("res://resources/certificate/x509_Certificate.crt")
+onready var GameServer = get_node("/root/GameServer")
 
 var username
 var password
@@ -33,6 +34,7 @@ func connect_to_server(_username, _password, _newAccount):
 	set_custom_multiplayer(gatewayApi)
 	custom_multiplayer.set_root_node(self)
 	custom_multiplayer.set_network_peer(network)
+	Log.DEBUG("Attempting to connect to gateway")
 	
 	network.connect("connection_succeeded", self, "_on_connection_succeeded")
 	network.connect("connection_failed", self, "_on_connection_failed")
@@ -54,8 +56,9 @@ func request_login():
 remote func return_login_request(results, token):
 	print("results received:" + str(results))
 	if results == true:
-		Server.token = token
-		Server.connect_to_server()
+		GameServer.start_server()
+		MasterServer.token = token
+		MasterServer.connect_to_server()
 	else:
 		print("Please provide correct username and password")
 		get_node("/root/SceneHandler/MainScreen/Background/Login/LoginButton").disabled = false
