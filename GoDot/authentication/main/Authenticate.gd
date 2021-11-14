@@ -43,7 +43,7 @@ remote func authenticate_player(username, password, playerId):
 			var hashed = str(randi()).sha256_text()
 			var timestamp = str(OS.get_unix_time())
 			token = hashed + timestamp
-			var gameServer = "GameServer" + str(GameServers.serverCount - 1) #have to load balance in the future
+			var gameServer = GameServers.gameServerList[0] #have to load balance in the future
 			GameServers.distribute_login_token(token, gameServer)
 			Log.INFO("Successful Authentication for: " + String(playerId))
 
