@@ -1,11 +1,6 @@
 extends Node
 
-var Player_Stats = preload("res://main/userDetails/PlayerStats.tscn")
-
 var network = NetworkedMultiplayerENet.new()
-var ip = "127.0.0.1"
-var port = 1909
-var token
 
 var clientClock = 0
 var decimalCollector : float = 0
@@ -20,35 +15,21 @@ func _physics_process(delta):
 	if decimalCollector >= 1.00:
 		clientClock += 1
 		decimalCollector -= 1.00
-	
-func connect_to_server():
-	network.create_client(ip, port)
-	get_tree().set_network_peer(network)
-	
-	network.connect("connection_succeeded", self, "_on_connection_succeeded")
-	network.connect("connection_failed", self, "_on_connection_failed")
 
-remote func connect_to_other(otherPort):
+func connect_to_server(ip, port):
 	get_tree().network_peer = null
-	network.create_client(ip, otherPort)
+	network.create_client(ip, int(port))
 	get_tree().set_network_peer(network)
 	
 	network.connect("connection_succeeded", self, "_on_connection_succeeded")
 	network.connect("connection_failed", self, "_on_connection_failed")
 
 func _on_connection_succeeded():
-	print("server: connection success")
+	Log.INFO("GameServer connection success")
 	#fetch_player_inventory()
-	rpc_id(1, "fetch_server_time", OS.get_system_time_msecs())
-	var timer = Timer.new()
-	timer.wait_time = 0.5
-	timer.autostart = true
-	timer.connect("timeout", self, "determine_latency")
-	self.add_child(timer)
-	
 	
 func _on_connection_failed():
-	print("server: connection fail")
+	Log.INFO("GameServer connection fail")
 
 func determine_latency():
 	rpc_id(1, "determine_latency", OS.get_system_time_msecs())
@@ -73,19 +54,6 @@ remote func return_latency(clientTime):
 		#print("new latency", latency)
 		latencyArray.clear()
 
-remote func fetch_token():
-	rpc_id(1, "return_token", token)
-
-remote func return_token_verification_results(result):
-	print("received token results")
-	if result == true:
-		get_node("/root/Main/LoginScreen").queue_free()
-		get_node("/root/Main").player_verified()
-		print("successful token verification")
-	else:
-		print("login failed; try again")
-		get_node("MainScreen/NinePatchRect/VBoxContainer/LoginButton").disabled = false
-
 func send_player_state(playerState):
 	rpc_unreliable_id(1, "receive_player_state", playerState)
 
@@ -97,36 +65,6 @@ remote func spawn_new_player(playerId, spawnPosition):
 	
 remote func despawn_player(playerId):
 	get_node("/root/SceneHandler").despawn_player(playerId)
-
-#lobby calls
-func create_lobby():
-	rpc_id(1, "request_create_lobby")
-
-remote func lobby_created(playerId, lobbyId):
-	get_node("/root/Main").load_lobby("Create")
-	
-func join_lobby(lobbyId):
-	rpc_id(1, "request_join_lobby", lobbyId)
-	
-remote func return_lobby_joined(playerId, lobbyId):
-	get_node("/root/Main/Hub").join_lobby()
-	pass
-	
-func leave_lobby(lobbyId):
-	rpc_id(1, "request_leave_lobby", lobbyId)
-
-remote func return_lobby_left():
-	get_node("/root/Main/Lobby").switch_to_hub()
-	pass
-
-func request_start_game(lobbyId):
-	rpc_id(1, "request_start_game", lobbyId)
-	
-remote func game_starting():
-	pass
-	
-remote func start_game():
-	pass
 	
 #Combat rpc calls
 #func npc_hit(enemyId, damage):
@@ -160,10 +98,3 @@ remote func receive_hit(playerId, damage):
 func fetch_player_inventory():
 	rpc_id(1, "fetch_player_inventory")
 	
-remote func return_player_inventory(inventory):
-	#TODO I'm not sure where yet
-	if not inventory == null:
-		var newPlayerStats = Player_Stats.instance()
-		get_parent().add_child(newPlayerStats, true)
-		print(inventory)
-	#get_node("/root/SceneHandler/characterModel")

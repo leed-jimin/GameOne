@@ -1,6 +1,6 @@
 extends Node
 
-#var Player_Stats = preload("res://main/userDetails/PlayerStats.tscn")
+var Player_Stats = preload("res://main/userDetails/PlayerStats.tscn")
 
 var network = NetworkedMultiplayerENet.new()
 var ip = "127.0.0.1"
@@ -22,34 +22,22 @@ func _physics_process(delta):
 		decimalCollector -= 1.00
 	
 func connect_to_server():
+	get_tree().network_peer = null
 	network.create_client(ip, port)
 	get_tree().set_network_peer(network)
 	
 	network.connect("connection_succeeded", self, "_on_connection_succeeded")
 	network.connect("connection_failed", self, "_on_connection_failed")
 
-remote func connect_to_other(otherPort):
-	Log.DEBUG("connecting to different server:" + str(otherPort))
-	get_tree().network_peer = null
-	network.create_client(ip, otherPort)
-	get_tree().set_network_peer(network)
-	
-	network.connect("connection_succeeded", self, "_on_connection_succeeded")
-	network.connect("connection_failed", self, "_on_connection_failed")
+remote func connect_to_game(_ip, _port):
+	GameServer.connect_to_server(_ip, _port)
 
 func _on_connection_succeeded():
-	print("server: connection success")
+	Log.INFO("connection to masterserver success")
 	#fetch_player_inventory()
-	rpc_id(1, "fetch_server_time", OS.get_system_time_msecs())
-	var timer = Timer.new()
-	timer.wait_time = 0.5
-	timer.autostart = true
-	timer.connect("timeout", self, "determine_latency")
-	self.add_child(timer)
-	
 	
 func _on_connection_failed():
-	Log.ERROR("connection to masterserver failed")
+	Log.INFO("connection to masterserver fail")
 
 func determine_latency():
 	rpc_id(1, "determine_latency", OS.get_system_time_msecs())
@@ -75,27 +63,19 @@ remote func return_latency(clientTime):
 		latencyArray.clear()
 
 remote func fetch_token():
+	print("returning token")
 	rpc_id(1, "return_token", token)
 
 remote func return_token_verification_results(result):
-	print("received token results")
 	if result == true:
+		get_node("/root/Main/LoginScreen").queue_free()
+		get_node("/root/Main").player_verified()
 		print("successful token verification")
+		GameServer.connect_to_server("127.0.0.1", 1908)
+		#self.custom_multiplayer.set_root_node(server);
 	else:
 		print("login failed; try again")
 		get_node("MainScreen/NinePatchRect/VBoxContainer/LoginButton").disabled = false
-
-func send_player_state(playerState):
-	rpc_unreliable_id(1, "receive_player_state", playerState)
-
-remote func receive_world_state(worldState):
-	get_node("/root/SceneHandler").update_world_state(worldState)
-
-remote func spawn_new_player(playerId, spawnPosition):
-	get_node("/root/SceneHandler").spawn_new_player(playerId, spawnPosition)
-	
-remote func despawn_player(playerId):
-	get_node("/root/SceneHandler").despawn_player(playerId)
 
 #lobby calls
 func create_lobby():
@@ -127,30 +107,3 @@ remote func game_starting():
 remote func start_game():
 	pass
 	
-#Combat rpc calls
-#func npc_hit(enemyId, damage):
-#	rpc_id(1, "send_npc_hit", enemyId, damage)
-#
-#func player_hit(playerId, damage):
-#	rpc_id(1, "send_player_hit", playerId, damage)
-#
-func send_attack(attack):
-	rpc_id(1, "attack", attack, clientClock)
-
-func send_character_hit(id, attackPosition, attackeePosition):
-	rpc_id(1, "character_hit", id, attackPosition, attackeePosition)
-	
-remote func receive_attack(attack, spawnTime, playerId):
-	if playerId == get_tree().get_network_unique_id():
-		pass #could correct client side predictions
-	else:
-		get_node("/root/SceneHandler/YSort/OtherPlayers/" + str(playerId)).attackDict[spawnTime] = {"Attack": attack}
-	
-remote func receive_hit(playerId, damage):
-	print("receiving hit")
-	if playerId == get_tree().get_network_unique_id():
-		print("got hit")
-		get_node("/root/SceneHandler/characterModel/AnimationHandler").on_hit(damage)
-	else:
-		print("other got hit")
-		get_node("/root/SceneHandler/YSort/OtherPlayers/" + str(playerId)).on_hit(damage);

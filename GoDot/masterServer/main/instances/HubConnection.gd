@@ -5,7 +5,7 @@ var gatewayApi = MultiplayerAPI.new()
 var ip = "127.0.0.1"
 var port = 1912
 
-onready var gameServer = get_node("/root/Server")
+onready var MasterServer = get_node("/root/MasterServer")
 
 func _ready():
 	connect_to_server()
@@ -34,5 +34,5 @@ func _on_connection_failed():
 	Log.INFO("GameServerHubConnection fail")
 
 remote func receive_login_token(token):
-	Log.DEBUG("login token received")
-	gameServer.expectedTokens.append(token)
+	Log.DEBUG("login token received from auth")
+	MasterServer.expectedTokens.append(token)

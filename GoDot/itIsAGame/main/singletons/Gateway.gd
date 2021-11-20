@@ -38,14 +38,13 @@ func connect_to_server(_username, _password, _newAccount):
 	network.connect("connection_failed", self, "_on_connection_failed")
 
 func _on_connection_succeeded():
-	print("connection success")
 	if newAccount:
 		request_create_account()
 	else:
 		request_login()
 	
 func _on_connection_failed():
-	print("connection fail")
+	Log.INFO("gateway connection fail")
 	get_node("/root/Main/LoginScreen/Background/Login/LoginButton").disabled = false
 	#reenable everything
 
@@ -58,14 +57,14 @@ func request_login():
 remote func return_login_request(results, token):
 	print("results received:" + str(results))
 	if results == true:
-		Server.token = token
-		Server.connect_to_server()
+		MasterServer.token = token
+		MasterServer.connect_to_server()
 	else:
 		print("Please provide correct username and password")
 		get_node("/root/Main/LoginScreen/Background/Login/LoginButton").disabled = false
 		#any other handling
-	network.disconnect("connection_succeeded", self, "_on_connection_succeeded")
-	network.disconnect("connection_failed", self, "_on_connection_failed")
+#	network.disconnect("connection_succeeded", self, "_on_connection_succeeded")
+#	network.disconnect("connection_failed", self, "_on_connection_failed")
 
 func request_create_account():
 	print("Requesting new account")

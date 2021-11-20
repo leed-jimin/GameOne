@@ -35,7 +35,7 @@ func rotate_model(rotationVector):
 	
 func attack():
 	for time in attackDict.keys():
-		if time <= Server.clientClock:
+		if time <= MasterServer.clientClock:
 			actionState.set_currState("BUSY")
 			anim.play(attackDict[time]["Attack"])
 			attackDict.erase(time)

@@ -46,10 +46,16 @@ func _on_TokenExpiration_timeout():
 	print("Expected Tokens: ")
 	print(expectedTokens)
 	
+remote func connect_as_server():
+	var serverId = get_tree().get_rpc_sender_id()
+	gameServerList[serverId] = { "gameSessions": 0 }
+	
 func fetch_token(playerId):
+	Log.DEBUG("Fetching token from: " + str(playerId))
 	rpc_id(playerId, "fetch_token")
 	
 remote func return_token(token):
+	Log.DEBUG("received token, starting verification")
 	var playerId = get_tree().get_rpc_sender_id()
 	playerVerificationProcess.verify(playerId, token)
 
@@ -94,13 +100,8 @@ func lobby_left():
 remote func request_start_game(lobbyId):
 	LobbyHandler.start_game(lobbyId)
 	
-func game_starting():
-	var playerId = get_tree().get_rpc_sender_id()
-	rpc_id(playerId, "game_starting")
+func game_starting(playerId, ip, port):
+	rpc_id(playerId, "connect_to_game", "127.0.0.1", "1908")
 
-#Game request values for players
-remote func fetch_player_inventory():
-	var playerId = get_tree().get_rpc_sender_id()
-	rpc_id(playerId, "return_player_inventory", {})
-	#var playerInventory = get_node(str(playerId)).playerInventory
+
 

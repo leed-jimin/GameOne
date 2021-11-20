@@ -35,10 +35,13 @@ func _on_peer_connected(playerId):
 func _on_peer_disconnected(playerId):
 	Log.INFO("peer disconnected: " + str(playerId))
 	
-remote func login_request(username, password):
+remote func login_request(username, password, isServer = false):
 	Log.INFO("login request recieved")
 	var playerId = custom_multiplayer.get_rpc_sender_id()
-	Authenticate.authenticate_player(username, password, playerId)
+	if isServer:
+		Authenticate.authenticate_server(username, password, playerId)
+	else:
+		Authenticate.authenticate_player(username, password, playerId)
 	
 func return_login_request(result, playerId, token):
 	rpc_id(playerId, "return_login_request", result, token)

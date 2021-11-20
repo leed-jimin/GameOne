@@ -38,10 +38,12 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Server="*res://main/singletons/Server.gd"
+MasterServer="*res://main/singletons/MasterServer.gd"
 Gateway="*res://main/singletons/Gateway.gd"
 GameData="*res://main/singletons/GameData.gd"
 Globals="*res://main/singletons/Globals.gd"
+GameServer="*res://main/singletons/GameServer.gd"
+Log="*res://main/singletons/Log.gd"
 
 [display]
 

@@ -44,10 +44,38 @@ remote func authenticate_player(username, password, playerId):
 			var timestamp = str(OS.get_unix_time())
 			token = hashed + timestamp
 			var gameServer = GameServers.gameServerList[0] #have to load balance in the future
-			GameServers.distribute_login_token(token, gameServer)
+			GameServers.distribute_login_token(token, gameServer)# master server
 			Log.INFO("Successful Authentication for: " + String(playerId))
 
 	rpc_id(gatewayId, "authentication_results", result, playerId, token)
+
+#will need to change to read from server database
+remote func authenticate_server(username, password, serverId):
+	var gatewayId = get_tree().get_rpc_sender_id()
+	var hashedPassword
+	var result
+	var token
+	
+	if not Database.ServerIDs.has(username):
+		result = false
+	else:
+		var retrievedSalt = Database.ServerIDs[username].Salt
+		hashedPassword = generate_hashed_password(password, retrievedSalt)
+		
+		if not Database.ServerIDs[username].Password == hashedPassword:
+			result = false
+		else:
+			result = true
+			
+			randomize()
+			var hashed = str(randi()).sha256_text()
+			var timestamp = str(OS.get_unix_time())
+			token = hashed + timestamp
+			var gameServer = GameServers.gameServerList[0] #have to load balance in the future
+			GameServers.distribute_login_token(token, gameServer) # master server
+			Log.INFO("Successful Authentication for: " + String(serverId))
+
+	rpc_id(gatewayId, "authentication_results", result, serverId, token)
 
 remote func create_account(username, password, playerId):
 	var gatewayId = get_tree().get_rpc_sender_id()
@@ -77,7 +105,6 @@ func generate_salt():
 func generate_hashed_password(password, salt):
 	var hashedPassword = password
 	var rounds = pow(2, 3) #maybe increase later to 18
-	print(hashedPassword)
 	while rounds > 0:
 		hashedPassword = (hashedPassword + salt).sha256_text()
 		rounds -= 1

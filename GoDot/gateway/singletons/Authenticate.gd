@@ -25,6 +25,10 @@ func _on_connection_failed():
 func authenticate_player(username, password, playerId):
 	Log.INFO("sending out auth request")
 	rpc_id(1, "authenticate_player", username, password, playerId)
+
+func authenticate_server(username, password, playerId):
+	Log.INFO("sending out auth request for server")
+	rpc_id(1, "authenticate_server", username, password, playerId)
 	
 remote func authentication_results(result, playerId, token):
 	Log.INFO("results received and replying to player login request")

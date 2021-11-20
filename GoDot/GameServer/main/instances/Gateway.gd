@@ -48,20 +48,17 @@ func _on_connection_failed():
 	#reenable everything
 
 func request_login():
-	print("Request to connect to gateway")
-	rpc_id(1, "login_request", username, password.sha256_text())
+	rpc_id(1, "login_request", username, password.sha256_text(), true)
 	username = ""
 	password = ""
 
 remote func return_login_request(results, token):
-	print("results received:" + str(results))
 	if results == true:
 		GameServer.start_server()
 		MasterServer.token = token
 		MasterServer.connect_to_server()
 	else:
 		print("Please provide correct username and password")
-		get_node("/root/SceneHandler/MainScreen/Background/Login/LoginButton").disabled = false
 		#any other handling
 	network.disconnect("connection_succeeded", self, "_on_connection_succeeded")
 	network.disconnect("connection_failed", self, "_on_connection_failed")

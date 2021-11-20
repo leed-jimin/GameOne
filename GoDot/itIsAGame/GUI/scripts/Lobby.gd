@@ -13,4 +13,4 @@ func exit_to_hub():
 	queue_free()
 
 func _on_TextureButton_pressed():
-	Server.request_start_game(lobbyId)
+	MasterServer.request_start_game(lobbyId)

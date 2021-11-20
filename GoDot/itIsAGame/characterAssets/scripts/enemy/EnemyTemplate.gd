@@ -29,7 +29,7 @@ func health_bar_update():
 	pass
 	
 func on_hit(damage):
-	Server.npc_hit(int(get_name()), damage)
+	MasterServer.npc_hit(int(get_name()), damage)
 	
 func on_death():
 	get_node("CollisionShape").set_deferred("disabled", true)
