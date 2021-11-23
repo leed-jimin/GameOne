@@ -7,6 +7,7 @@ var decimalCollector : float = 0
 var latencyArray = []
 var latency = 0
 var deltaLatency = 0
+
 	
 func _physics_process(delta):
 	clientClock += int(delta * 1000) + deltaLatency
@@ -51,20 +52,20 @@ remote func return_latency(clientTime):
 				totalLatency += latencyArray[i]
 		deltaLatency = (totalLatency / latencyArray.size()) - latency
 		latency = totalLatency / latencyArray.size()
-		#print("new latency", latency)
+		print("new latency", latency)
 		latencyArray.clear()
 
 func send_player_state(playerState):
 	rpc_unreliable_id(1, "receive_player_state", playerState)
 
 remote func receive_world_state(worldState):
-	get_node("/root/SceneHandler").update_world_state(worldState)
+	get_node("/root/Main/SceneHandler").update_world_state(worldState)
 
 remote func spawn_new_player(playerId, spawnPosition):
-	get_node("/root/SceneHandler").spawn_new_player(playerId, spawnPosition)
+	get_node("/root/Main/SceneHandler").spawn_new_player(playerId, spawnPosition)
 	
 remote func despawn_player(playerId):
-	get_node("/root/SceneHandler").despawn_player(playerId)
+	get_node("/root/Main/SceneHandler").despawn_player(playerId)
 	
 #Combat rpc calls
 #func npc_hit(enemyId, damage):
@@ -83,16 +84,16 @@ remote func receive_attack(attack, spawnTime, playerId):
 	if playerId == get_tree().get_network_unique_id():
 		pass #could correct client side predictions
 	else:
-		get_node("/root/SceneHandler/YSort/OtherPlayers/" + str(playerId)).attackDict[spawnTime] = {"Attack": attack}
+		get_node("/root/Main/SceneHandler/YSort/OtherPlayers/" + str(playerId)).attackDict[spawnTime] = {"Attack": attack}
 	
 remote func receive_hit(playerId, damage):
 	print("receiving hit")
 	if playerId == get_tree().get_network_unique_id():
 		print("got hit")
-		get_node("/root/SceneHandler/characterModel/AnimationHandler").on_hit(damage)
+		get_node("/root/Main/SceneHandler/characterModel/AnimationHandler").on_hit(damage)
 	else:
 		print("other got hit")
-		get_node("/root/SceneHandler/YSort/OtherPlayers/" + str(playerId)).on_hit(damage);
+		get_node("/root/Main/SceneHandler/YSort/OtherPlayers/" + str(playerId)).on_hit(damage);
 
 #server calls for player info
 func fetch_player_inventory():

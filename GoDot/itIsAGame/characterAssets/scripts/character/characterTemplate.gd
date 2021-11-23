@@ -1,6 +1,5 @@
 extends KinematicBody
 
-var States = load("res://characterAssets/scripts/character/States.gd") # Relative path
 
 var attackDict = {}
 
@@ -14,8 +13,8 @@ var actionState
 onready var anim = get_node("AnimationPlayer")
 
 func _ready():
-	actionState = States.new(actionStates, "NONE")
-
+	pass
+	
 func move_player(newPosition, rotationVector):
 	if not actionState.get_currState() == 1:
 		rotate_model(rotationVector)
@@ -35,7 +34,7 @@ func rotate_model(rotationVector):
 	
 func attack():
 	for time in attackDict.keys():
-		if time <= MasterServer.clientClock:
+		if time <= GameServer.clientClock:
 			actionState.set_currState("BUSY")
 			anim.play(attackDict[time]["Attack"])
 			attackDict.erase(time)

@@ -50,7 +50,7 @@ func update_world_state(worldState):
 		worldStateBuffer.append(worldState)
 		
 func _physics_process(delta):
-	var renderTime = MasterServer.clientClock - interpolationOffset
+	var renderTime = GameServer.clientClock - interpolationOffset
 	if worldStateBuffer.size() > 1:
 		while worldStateBuffer.size() > 2 and renderTime > worldStateBuffer[2].T:
 			worldStateBuffer.remove(0)

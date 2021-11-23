@@ -71,7 +71,6 @@ remote func return_token_verification_results(result):
 		get_node("/root/Main/LoginScreen").queue_free()
 		get_node("/root/Main").player_verified()
 		print("successful token verification")
-		GameServer.connect_to_server("127.0.0.1", 1908)
 		#self.custom_multiplayer.set_root_node(server);
 	else:
 		print("login failed; try again")

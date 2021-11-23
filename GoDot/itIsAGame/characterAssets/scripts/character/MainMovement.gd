@@ -91,7 +91,7 @@ func _physics_process(delta):
 		#Standard Attacks End
 
 	animationHandler.handle_aerial_movement_animation(grounded, moveVec, justJumped)
-#	define_player_state()
+	define_player_state()
 
 func handle_rotation():
 	if left:
@@ -151,7 +151,7 @@ func root_motion_move_and_slide(delta):
 
 func define_player_state():
 	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin, "R": rotation_degrees}
-	MasterServer.send_player_state(playerState)
+	GameServer.send_player_state(playerState)
 
 func store_movement_input():
 	if Input.is_action_just_pressed("ui_left"):
