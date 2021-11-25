@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://main/src/SceneHandler.gd" type="Script" id=1]
+
+[node name="SceneHandler" type="Node"]
+script = ExtResource( 1 )
+
+[node name="YSort" type="YSort" parent="."]
+
+[node name="OtherPlayers" type="YSort" parent="YSort"]
+
+[node name="Enemies" type="YSort" parent="YSort"]
+
+[node name="Camera" type="InterpolatedCamera" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.841388, 0.540431, 0, -0.540431, 0.841388, 0, 22.3228, 46.5177 )
+keep_aspect = 0
+fov = 100.0
+speed = 7.0
+enabled = true

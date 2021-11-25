@@ -40,6 +40,7 @@ var currentHp = 100
 
 func _ready():
 	moveVec = Vector3()
+	#set_physics_process(false)
 
 func _physics_process(delta):
 	justJumped = false
@@ -91,7 +92,7 @@ func _physics_process(delta):
 		#Standard Attacks End
 
 	animationHandler.handle_aerial_movement_animation(grounded, moveVec, justJumped)
-	define_player_state()
+	#define_player_state()
 
 func handle_rotation():
 	if left:
@@ -126,14 +127,15 @@ func move_and_slide_wrapper(moveVec):
 		airDrift.y = yVelo
 		move_and_slide(airDrift, Vector3.UP, true)
 		return
+		
 	if animationTree.get("parameters/movement/blend_amount") == 1:
 		moveVec *= SPEED_RUN
 	elif animationTree.get("parameters/movement/blend_amount") == 0:
 		moveVec *= SPEED_WALK
-		
+
 	airDrift = moveVec
 	moveVec.y = yVelo
-	
+
 	move_and_slide(moveVec, Vector3.UP, true)
 
 func root_motion_move_and_slide(delta):

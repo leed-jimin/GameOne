@@ -4,7 +4,7 @@ onready var loginScreen = load("res://GUI/scenes/LoginScreen.tscn")
 onready var transition = load("res://GUI/scenes/Transition.tscn")
 onready var hub = load("res://GUI/scenes/Hub.tscn")
 onready var lobby = load("res://GUI/scenes/Lobby.tscn")
-onready var game = load("res://main/SceneHandler.tscn")
+onready var sceneHandler = load("res://main//src/SceneHandler.tscn")
 
 func _ready():
 	#load_login_screen()
@@ -32,7 +32,7 @@ func load_lobby(action):
 	get_node("Hub").hide()
 	
 func load_game():
-	add_child(game.instance())
+	add_child(sceneHandler.instance())
 	
 func transition():
 	add_child(transition.instance())

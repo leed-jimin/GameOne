@@ -89,6 +89,10 @@ test_button={
  ]
 }
 
+[physics]
+
+common/physics_fps=144
+
 [rendering]
 
 environment/default_environment="res://main/default_env.tres"
