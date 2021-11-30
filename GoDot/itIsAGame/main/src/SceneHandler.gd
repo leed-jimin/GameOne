@@ -36,7 +36,6 @@ func spawn_new_enemy(enemyId, enemyDict):
 	newEnemy.name = str(enemyId)
 	get_node("YSort/Enemies").add_child(newEnemy, true)
 
-
 func despawn_player(playerId):
 	yield(get_tree().create_timer(0.2), "timeout")
 	get_node("YSort/OtherPlayers/" + str(playerId)).queue_free()
@@ -69,16 +68,16 @@ func _physics_process(delta):
 				else:
 					print("spawning player")
 					spawn_new_player(player, worldStateBuffer[2][player]["P"])
-			for enemy in worldStateBuffer[2]["Enem"].keys():
-				if not worldStateBuffer[1]["Enem"].has(enemy):
-					continue
-				if get_node("YSort/Enemies").has_node(str(enemy)):
-					var newPosition = lerp(worldStateBuffer[1]["Enem"][enemy]["Location"], worldStateBuffer[2]["Enem"][enemy]["Location"], interpolationFactor)
-					#var rotationVector = worldStateBuffer[2]["Enem"][enemy][""]
-					get_node("YSort/Enemies/" + str(enemy)).move_enemy(newPosition)
-					get_node("YSort/Enemies/" + str(enemy)).health(worldStateBuffer[1]["Enem"][enemy]["Health"])
-				else:
-					spawn_new_enemy(enemy, worldStateBuffer[2]["Enem"][enemy])
+#			for enemy in worldStateBuffer[2]["Enem"].keys():
+#				if not worldStateBuffer[1]["Enem"].has(enemy):
+#					continue
+#				if get_node("YSort/Enemies").has_node(str(enemy)):
+#					var newPosition = lerp(worldStateBuffer[1]["Enem"][enemy]["Location"], worldStateBuffer[2]["Enem"][enemy]["Location"], interpolationFactor)
+#					#var rotationVector = worldStateBuffer[2]["Enem"][enemy][""]
+#					get_node("YSort/Enemies/" + str(enemy)).move_enemy(newPosition)
+#					get_node("YSort/Enemies/" + str(enemy)).health(worldStateBuffer[1]["Enem"][enemy]["Health"])
+#				else:
+#					spawn_new_enemy(enemy, worldStateBuffer[2]["Enem"][enemy])
 		elif renderTime > worldStateBuffer[1].T:
 			var extrapolationFactor = float(renderTime - worldStateBuffer[0]["T"]) / float(worldStateBuffer[1]["T"] - worldStateBuffer[0]["T"]) - 1.00
 			for player in worldStateBuffer[1].keys():

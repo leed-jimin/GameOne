@@ -33,7 +33,6 @@ func _physics_process(delta):
 		#cuts
 		#physics check
 		#anything else
-		
 		get_node("/root/GameServer").send_world_state(worldState)
 
 func spawn_enemy():

@@ -92,7 +92,7 @@ func _physics_process(delta):
 		#Standard Attacks End
 
 	animationHandler.handle_aerial_movement_animation(grounded, moveVec, justJumped)
-	#define_player_state()
+	define_player_state()
 
 func handle_rotation():
 	if left:

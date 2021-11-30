@@ -1,6 +1,6 @@
 extends KinematicBody
 
-
+onready var CharacterModel = $CharacterModel
 var attackDict = {}
 
 const actionStates = {
@@ -10,27 +10,25 @@ const actionStates = {
 
 var actionState
 
-onready var anim = get_node("AnimationPlayer")
+onready var anim = CharacterModel.get_node("AnimationPlayer")
 
 func _ready():
 	pass
 	
 func move_player(newPosition, rotationVector):
-	if not actionState.get_currState() == 1:
-		rotate_model(rotationVector)
-		if transform.origin.is_equal_approx(newPosition):
-			anim.play("Idle")
-		else:
-			anim.play("Walking")
-			transform.origin = newPosition
+	rotate_model(rotationVector)
+	if transform.origin.is_equal_approx(newPosition):
+		anim.play("Idle")
+	else:
+		anim.play("Walking")
+		transform.origin = newPosition
 	
 func _physics_process(delta):
 	if attackDict.size() > 0:
 		attack()
 		
 func rotate_model(rotationVector):
-	get_node("rig").rotation_degrees = rotationVector
-	get_node("CollisionShape").rotation_degrees = rotationVector
+	CharacterModel.rotation_degrees = rotationVector
 	
 func attack():
 	for time in attackDict.keys():

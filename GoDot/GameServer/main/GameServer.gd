@@ -36,7 +36,7 @@ func start_server():
 func create_player_container(playerId):
 	var newPlayerContainer = PlayerContainer.instance()
 	newPlayerContainer.name = str(playerId)
-	get_parent().add_child(newPlayerContainer, true)
+	add_child(newPlayerContainer, true)
 	var playerContainer = get_node("../" + str(playerId))
 	#fill_player_container(playerContainer)
 
@@ -48,13 +48,13 @@ func _peer_disconnected(playerId):
 	Log.INFO("disconnected Id: " + String(playerId))
 	if has_node(str(playerId)):
 		get_node(str(playerId)).queue_free()
-		get_node("StateProcessing").playerStateCollection.erase(playerId)
-		get_node("StateProcessing").playerList.erase(playerId)
+		StateProcessing.playerStateCollection.erase(playerId)
+		StateProcessing.playerList.erase(playerId)
 		rpc_id(0, "despawn_player", playerId)
 
 remote func receive_player_state(playerState):
 	var playerId = get_tree().get_rpc_sender_id()
-	var collection = get_node("StateProcessing").playerStateCollection
+	var collection = StateProcessing.playerStateCollection
 	if collection.has(playerId):
 		if collection[playerId]["T"] < playerState["T"]:
 			collection[playerId] = playerState
