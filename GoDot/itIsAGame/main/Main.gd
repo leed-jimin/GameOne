@@ -34,7 +34,7 @@ func load_lobby(action):
 func load_game():
 	add_child(sceneHandler.instance())
 	
-func transition():
+func transition_scenes():
 	add_child(transition.instance())
 	delete_children()
 	

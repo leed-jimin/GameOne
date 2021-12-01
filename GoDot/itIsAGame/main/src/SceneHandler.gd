@@ -1,7 +1,7 @@
 extends Node
 
 var playerStats = preload("res://main/userDetails/PlayerStats.tscn")
-var player = preload("res://characterAssets/scenes/Player.tscn")
+var playerScene = preload("res://characterAssets/scenes/Player.tscn")
 var characterTemplate = preload("res://characterAssets/scenes/CharacterTemplate.tscn")
 
 var lastWorldState = 0
@@ -10,17 +10,15 @@ const interpolationOffset = 100
 
 func _ready():
 	spawn_user_player() # this is for testing animations
-	pass
 	
 func spawn_user_player():
-	var model = player.instance()
+	var model = playerScene.instance()
 	model.transform.origin = Vector3(0, 10, 0)
 	add_child(model)
 	$Camera.set_target(model.get_node("CameraLocation"))
-	
-#other player logic
+
 func spawn_new_player(playerId, spawnPosition):
-	if get_tree().get_network_unique_id() != playerId:
+	if not get_tree().get_network_unique_id() == playerId:
 		if not get_node("YSort/OtherPlayers").has_node(str(playerId)):
 			var newPlayer = characterTemplate.instance()
 			newPlayer.transform.origin = spawnPosition # might not work
@@ -42,13 +40,13 @@ func despawn_player(playerId):
 
 func update_world_state(worldState):
 	if worldState["T"] > lastWorldState:
-		lastWorldState = worldState["T"] 
+		lastWorldState = worldState["T"]
 		worldStateBuffer.append(worldState)
 		
 func _physics_process(delta):
 	var renderTime = GameServer.clientClock - interpolationOffset
 	if worldStateBuffer.size() > 1:
-		while worldStateBuffer.size() > 2 and renderTime > worldStateBuffer[2].T:
+		while worldStateBuffer.size() > 2 and renderTime > worldStateBuffer[2]["T"]:
 			worldStateBuffer.remove(0)
 		if worldStateBuffer.size() > 2:
 			var interpolationFactor = float(renderTime - worldStateBuffer[1]["T"]) / float(worldStateBuffer[2]["T"] - worldStateBuffer[1]["T"])

@@ -52,6 +52,14 @@ func _peer_disconnected(playerId):
 		StateProcessing.playerList.erase(playerId)
 		rpc_id(0, "despawn_player", playerId)
 
+remote func fetch_server_time(clientTime):
+	var playerId = get_tree().get_rpc_sender_id()
+	rpc_id(playerId, "return_server_time", OS.get_system_time_msecs(), clientTime)
+	
+remote func determine_latency(clientTime):
+	var playerId = get_tree().get_rpc_sender_id()
+	rpc_id(playerId, "return_latency", clientTime)
+
 remote func receive_player_state(playerState):
 	var playerId = get_tree().get_rpc_sender_id()
 	var collection = StateProcessing.playerStateCollection
@@ -66,23 +74,14 @@ func send_world_state(worldState):
 
 remote func start_game():
 	pass
-	
-#Combat rpc calls
-#func npc_hit(enemyId, damage):
-#	rpc_id(1, "send_npc_hit", enemyId, damage)
-#
-#func player_hit(playerId, damage):
-#	rpc_id(1, "send_player_hit", playerId, damage)
-#
 
 remote func game_starting():
 	pass
 	
-	
 #Combat rpc calls
-#func npc_hit(enemyId, damage):
-#	rpc_id(1, "send_npc_hit", enemyId, damage)
-#
-#func player_hit(playerId, damage):
-#	rpc_id(1, "send_player_hit", playerId, damage)
-#
+func player_hit(playerId, damage):
+	rpc_id(0, "send_player_hit", playerId, damage)
+
+remote func attack(attack, clientClock):
+	var playerId = get_tree().get_rpc_sender_id()
+	rpc_id(0, "receive_attack", clientClock, playerId, attack, 10)

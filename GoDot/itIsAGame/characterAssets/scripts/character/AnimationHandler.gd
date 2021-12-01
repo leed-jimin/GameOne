@@ -58,19 +58,18 @@ func handle_attack_animation(type):
 		if animationTree.get("parameters/onGround/current") == YN.NO:
 			animationTree.tree_root.get_node("airAction_attack").set_animation("r_l_aerialElbow")
 			animationTree.set("parameters/isAirAction/current", YN.YES)
+			GameServer.send_attack("r_l_aerialElbow")
 		else:
 			animNode.set_animation("lJab")
 			animationTree.set("parameters/action/blend_amount", 0)
 			lightAttkPoints = lightAttkPoints % (lightAttkArr.size())
 			timer.wait_time = lightWaitTime
 			if lightAttkPoints == 0:
-				#Server.send_attack(lightAttkArr[lightAttkPoints])
+				GameServer.send_attack(lightAttkArr[lightAttkPoints])
 #				play_anim(lightAttkArr[lightAttkPoints])
-				pass
 			elif lightAttkPoints != lightAttkArr.size() && animationPlayer.get_queue().size() == 0:
-				#Server.send_attack(lightAttkArr[lightAttkPoints])
+				GameServer.send_attack(lightAttkArr[lightAttkPoints])
 #				animationPlayer.queue(lightAttkArr[lightAttkPoints])
-				pass
 			lightAttkPoints = lightAttkPoints + 1
 			animationTree.set("parameters/isAction/current", YN.YES)
 		animationTree.set("parameters/actionType/current", Globals.ActionState.ATTACK)
@@ -78,6 +77,7 @@ func handle_attack_animation(type):
 		if animationTree.get("parameters/onGround/current") == YN.NO:
 			animationTree.tree_root.get_node("airAction_attack").set_animation("flyingKick")
 			animationTree.set("parameters/isAirAction/current", YN.YES)
+			GameServer.send_attack("flyingKick")
 		else:
 			animNode.set_animation("lFrontKick")
 			heavyAttkPoints = heavyAttkPoints % (heavyAttkArr.size())

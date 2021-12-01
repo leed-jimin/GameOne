@@ -27,14 +27,19 @@ func connect_to_server(ip, port):
 
 func _on_connection_succeeded():
 	Log.INFO("GameServer connection success")
-	#fetch_player_inventory()
+	rpc_id(1, "fetch_server_time", OS.get_system_time_msecs())
+	var timer = Timer.new()
+	timer.wait_time = 0.5
+	timer.autostart = true
+	timer.connect("timeout", self, "determine_latency")
+	self.add_child(timer)
 	
 func _on_connection_failed():
 	Log.INFO("GameServer connection fail")
 
 func determine_latency():
 	rpc_id(1, "determine_latency", OS.get_system_time_msecs())
-
+	
 remote func return_server_time(serverTime, clientTime):
 	latency = (OS.get_system_time_msecs() - clientTime) / 2
 	clientClock = serverTime + latency
@@ -77,14 +82,15 @@ remote func despawn_player(playerId):
 func send_attack(attack):
 	rpc_id(1, "attack", attack, clientClock)
 
-func send_character_hit(id, attackPosition, attackeePosition):
-	rpc_id(1, "character_hit", id, attackPosition, attackeePosition)
-	
-remote func receive_attack(attack, spawnTime, playerId):
+remote func receive_attack(spawnTime, playerId, attack, damage):
 	if playerId == get_tree().get_network_unique_id():
 		pass #could correct client side predictions
 	else:
-		get_node("/root/Main/SceneHandler/YSort/OtherPlayers/" + str(playerId)).attackDict[spawnTime] = {"Attack": attack}
+		get_node("/root/Main/SceneHandler/YSort/OtherPlayers/" + str(playerId)).attackDict[spawnTime] = attack
+
+func send_character_hit(id, attackPosition, attackeePosition):
+	rpc_id(1, "character_hit", id, attackPosition, attackeePosition)
+	
 	
 remote func receive_hit(playerId, damage):
 	print("receiving hit")

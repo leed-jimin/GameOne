@@ -7,8 +7,8 @@ onready var animationHandler = $AnimationHandler
 onready var animationTree = $CharacterModel/AnimationTree
 onready var CharacterModel = $CharacterModel
 
-const SPEED_WALK = 4
-const SPEED_RUN = 16
+const SPEED_WALK = 8
+const SPEED_RUN = SPEED_WALK * 3
 const JUMP_FORCE = 30
 const GRAVITY = 1.4
 const SPEED_MAX_FALL = -50
@@ -77,7 +77,7 @@ func _physics_process(delta):
 		elif Input.is_action_just_pressed("heavy_attack"):
 			inputBuffer.insert(InputType.HEAVY)
 			animationHandler.handle_attack_animation("heavy_attack")
-		move_and_slide_wrapper(moveVec)
+		move_and_slide_wrapper()
 		store_movement_input()
 
 	elif animationTree.is_attacking(): #attacking
@@ -117,13 +117,13 @@ func handle_rotation():
 func rotate_model(rotationVector):
 	CharacterModel.rotation_degrees = rotationVector
 	
-func move_and_slide_wrapper(moveVec):
+func move_and_slide_wrapper():
 	moveVec = moveVec.normalized()
 	moveVec = moveVec.rotated(Vector3.UP, rotation.y)
 	
 	if not grounded:
-		airDrift.x = max(min(airDrift.x + moveVec.x * .5, SPEED_RUN), -SPEED_RUN)
-		airDrift.z = max(min(airDrift.z + moveVec.z * .5, SPEED_RUN), -SPEED_RUN)
+		airDrift.x = max(min(airDrift.x + moveVec.x * .3, SPEED_RUN), -SPEED_RUN)
+		airDrift.z = max(min(airDrift.z + moveVec.z * .3, SPEED_RUN), -SPEED_RUN)
 		airDrift.y = yVelo
 		move_and_slide(airDrift, Vector3.UP, true)
 		return
@@ -133,10 +133,9 @@ func move_and_slide_wrapper(moveVec):
 	elif animationTree.get("parameters/movement/blend_amount") == 0:
 		moveVec *= SPEED_WALK
 
-	airDrift = moveVec
 	moveVec.y = yVelo
 
-	move_and_slide(moveVec, Vector3.UP, true)
+	airDrift = move_and_slide(moveVec, Vector3.UP, true)
 
 func root_motion_move_and_slide(delta):
 	rootMotion = animationTree.get_root_motion_transform()
@@ -152,7 +151,7 @@ func root_motion_move_and_slide(delta):
 	moveVec = Vector3()
 
 func define_player_state():
-	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin, "R": rotation_degrees}
+	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin, "R": CharacterModel.rotation_degrees} #could be global transform
 	GameServer.send_player_state(playerState)
 
 func store_movement_input():
