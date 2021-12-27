@@ -37,7 +37,7 @@ func create_player_container(playerId):
 	var newPlayerContainer = PlayerContainer.instance()
 	newPlayerContainer.name = str(playerId)
 	add_child(newPlayerContainer, true)
-	var playerContainer = get_node("../" + str(playerId))
+	#var playerContainer = get_node(str(playerId))
 	#fill_player_container(playerContainer)
 
 func _peer_connected(playerId):

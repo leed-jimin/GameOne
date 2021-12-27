@@ -5,7 +5,7 @@ onready var inputBuffer = $InputBuffer
 onready var timer = $Timer
 onready var animationHandler = $AnimationHandler
 onready var animationTree = $CharacterModel/AnimationTree
-onready var CharacterModel = $CharacterModel
+onready var characterModel = $CharacterModel
 
 const SPEED_WALK = 8
 const SPEED_RUN = SPEED_WALK * 3
@@ -40,6 +40,7 @@ var currentHp = 100
 
 func _ready():
 	moveVec = Vector3()
+	characterDetails.get_attack_patterns()
 	#set_physics_process(false)
 
 func _physics_process(delta):
@@ -92,7 +93,7 @@ func _physics_process(delta):
 		#Standard Attacks End
 
 	animationHandler.handle_aerial_movement_animation(grounded, moveVec, justJumped)
-	define_player_state()
+#	define_player_state()
 
 func handle_rotation():
 	if left:
@@ -115,7 +116,7 @@ func handle_rotation():
 		rotate_model(Vector3(0, 0, 0))
 
 func rotate_model(rotationVector):
-	CharacterModel.rotation_degrees = rotationVector
+	characterModel.rotation_degrees = rotationVector
 	
 func move_and_slide_wrapper():
 	moveVec = moveVec.normalized()
@@ -145,13 +146,18 @@ func root_motion_move_and_slide(delta):
 	moveVec.z = h_velocity.z
 	moveVec.y = yVelo
 
-	move_and_slide(CharacterModel.global_transform.basis.xform(moveVec), Vector3.UP, true)
+	move_and_slide(characterModel.global_transform.basis.xform(moveVec), Vector3.UP, true)
 
 	rootMotion = rootMotion.orthonormalized() # Orthonormalize orientation.
 	moveVec = Vector3()
 
 func define_player_state():
-	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin, "R": CharacterModel.rotation_degrees} #could be global transform
+	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin, "R": characterModel.rotation_degrees} #could be global transform
+	if grounded:
+		playerState["M"] = animationTree.get("parameters/movement/blend_amount") # add jump or nah
+	else:
+		playerState["M"] = 2
+		
 	GameServer.send_player_state(playerState)
 
 func store_movement_input():

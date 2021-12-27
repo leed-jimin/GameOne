@@ -61,8 +61,7 @@ func _physics_process(delta):
 					continue
 				if get_node("YSort/OtherPlayers").has_node(str(player)):
 					var newPosition = lerp(worldStateBuffer[1][player]["P"], worldStateBuffer[2][player]["P"], interpolationFactor)
-					var rotationVector = worldStateBuffer[2][player]["R"]
-					get_node("YSort/OtherPlayers/" + str(player)).move_player(newPosition, rotationVector)
+					get_node("YSort/OtherPlayers/" + str(player)).move_player(newPosition, worldStateBuffer[2][player]["R"], worldStateBuffer[2][player]["M"])
 				else:
 					print("spawning player")
 					spawn_new_player(player, worldStateBuffer[2][player]["P"])

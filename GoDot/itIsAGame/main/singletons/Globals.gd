@@ -1,8 +1,8 @@
 extends Node
 
 #constants
-const GROUND = "ground"
-const AIR = "air"
+const GROUND = "Ground"
+const AIR = "Air"
 
 #enums
 enum YN {
@@ -15,4 +15,13 @@ enum ActionState {
 	ACTION = 1,
 	DAMAGE = 2,
 	DEAD = 3,
+}
+
+const AttackTypes = {
+	LIGHT = "light",
+	HEAVY = "heavy",
+	SPECIAL = "special",
+	SPECIAL_LIGHT = "spLight",
+	SPECIAL_HEAVY = "spHeavy",
+	DASH = "dash"
 }

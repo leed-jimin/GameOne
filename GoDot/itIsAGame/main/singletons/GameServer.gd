@@ -86,7 +86,7 @@ remote func receive_attack(spawnTime, playerId, attack, damage):
 	if playerId == get_tree().get_network_unique_id():
 		pass #could correct client side predictions
 	else:
-		get_node("/root/Main/SceneHandler/YSort/OtherPlayers/" + str(playerId)).attackDict[spawnTime] = attack
+		get_node("/root/Main/SceneHandler/YSort/OtherPlayers/" + str(playerId)).actionDict[spawnTime] = attack
 
 func send_character_hit(id, attackPosition, attackeePosition):
 	rpc_id(1, "character_hit", id, attackPosition, attackeePosition)

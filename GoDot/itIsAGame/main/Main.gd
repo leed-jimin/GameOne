@@ -9,7 +9,7 @@ onready var sceneHandler = load("res://main//src/SceneHandler.tscn")
 func _ready():
 	#load_login_screen()
 	#Gateway.connect_to_server("test1", "test1", false)
-	GameServer.connect_to_server("127.0.0.1", 1908)
+#	GameServer.connect_to_server("127.0.0.1", 1908)
 #	MasterServer.connect_to_server()
 	load_game() #for testing animations
 

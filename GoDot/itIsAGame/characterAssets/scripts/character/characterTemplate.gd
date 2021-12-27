@@ -1,33 +1,61 @@
 extends KinematicBody
 
 onready var characterModel = $CharacterModel
-onready var animationPlayer = characterModel.get_node("AnimationPlayer")
+onready var animationTree = $CharacterModel/AnimationTree
+onready var animationPlayer = $CharacterModel/AnimationPlayer
 
-var attackDict = {}
+const YN = Globals.YN
 
+var groundActionNode
+var airActionNode
+var grounded
+var actionDict = {}
 
-func move_player(newPosition, rotationVector):
+func _ready():
+	animationPlayer.get_animation("idle").loop = true
+	animationPlayer.get_animation("run").loop = true
+	animationPlayer.get_animation("walk").loop = true
+	animationTree.active = true
+	groundActionNode = animationTree.tree_root.get_node("actionGround")
+	airActionNode = animationTree.tree_root.get_node("actionAir")
+
+func move_player(newPosition, rotationVector, movement):
 	rotate_model(rotationVector)
-	if transform.origin.is_equal_approx(newPosition):
-		animationPlayer.play("Idle")
+	if movement == 2:
+		grounded = false
+		animationTree.set("parameters/onGround/current", YN.NO)
 	else:
-		animationPlayer.play("walk")
-		transform.origin = newPosition
+		grounded = true
+		animationTree.set("parameters/onGround/current", YN.YES)
+		if movement == 0:
+			animationTree.set_walk()
+		elif movement == 1:
+			animationTree.set_run()
+		else:
+			animationTree.set_idle()
+		
+	transform.origin = newPosition
+	move_and_slide(Vector3(0, 0, 0), Vector3.UP, true)
 
-func _physics_process(delta):
-	if attackDict.size() > 0:
-		attack()
+func _physics_process(_delta):
+	if actionDict.size() > 0:
+		action()
 		
 func rotate_model(rotationVector):
 	characterModel.rotation_degrees = rotationVector
 	
-func attack():
-	for time in attackDict.keys():
+func action():
+	for time in actionDict.keys():
 		if time <= GameServer.clientClock:
-			animationPlayer.play(attackDict[time])
-			attackDict.erase(time)
+			if grounded:
+				groundActionNode.set_animation(actionDict[time])
+				animationTree.set_action_ground()
+			else:
+				airActionNode.set_animation(actionDict[time])
+				animationTree.set_action_air()
+				
+		actionDict.erase(time)
 
 func on_hit(damage):
-	animationPlayer.play("lightDamage")
-	yield(get_tree().create_timer(0.5), "timeout")
+#	animationPlayer.play("lightDamage")
 	print("taking hit")

@@ -4,7 +4,6 @@ class_name AnimationHandler
 
 onready var animationPlayer = get_node("../CharacterModel/AnimationPlayer")
 onready var timer = get_node("../Timer")
-onready var characterDetails = get_node("../CharacterDetails")
 onready var animationTree = get_node("../CharacterModel/AnimationTree")
 onready var inputBuffer = get_node("../InputBuffer")
 #these will be loaded from playerdetails
@@ -24,8 +23,9 @@ var YN = Globals.YN
 
 func _ready():
 	animationPlayer.get_animation("walk").set_loop(true)
-	animationPlayer.get_animation("Idle").set_loop(true)
+	animationPlayer.get_animation("idle").set_loop(true)
 	animationPlayer.get_animation("run").set_loop(true)
+	animationPlayer.get_animation("falling").set_loop(true)
 	animationTree.active = true
 
 func handle_aerial_movement_animation(grounded, moveVec, justJumped):
@@ -56,26 +56,23 @@ func handle_attack_animation(type):
 
 	if type == "light_attack":
 		if animationTree.get("parameters/onGround/current") == YN.NO:
-			animationTree.tree_root.get_node("airAction_attack").set_animation("r_l_aerialElbow")
+			animationTree.tree_root.get_node("attackAir").set_animation("r_l_aerialElbow")
 			animationTree.set("parameters/isAirAction/current", YN.YES)
 			GameServer.send_attack("r_l_aerialElbow")
 		else:
-			animNode.set_animation("lJab")
-			animationTree.set("parameters/action/blend_amount", 0)
 			lightAttkPoints = lightAttkPoints % (lightAttkArr.size())
 			timer.wait_time = lightWaitTime
 			if lightAttkPoints == 0:
 				GameServer.send_attack(lightAttkArr[lightAttkPoints])
-#				play_anim(lightAttkArr[lightAttkPoints])
 			elif lightAttkPoints != lightAttkArr.size() && animationPlayer.get_queue().size() == 0:
 				GameServer.send_attack(lightAttkArr[lightAttkPoints])
 #				animationPlayer.queue(lightAttkArr[lightAttkPoints])
 			lightAttkPoints = lightAttkPoints + 1
+			animationTree.set("parameters/actionType/current", Globals.ActionState.ATTACK)
 			animationTree.set("parameters/isAction/current", YN.YES)
-		animationTree.set("parameters/actionType/current", Globals.ActionState.ATTACK)
 	elif type == "heavy_attack":
 		if animationTree.get("parameters/onGround/current") == YN.NO:
-			animationTree.tree_root.get_node("airAction_attack").set_animation("flyingKick")
+			animationTree.tree_root.get_node("attackAir").set_animation("flyingKick")
 			animationTree.set("parameters/isAirAction/current", YN.YES)
 			GameServer.send_attack("flyingKick")
 		else:
