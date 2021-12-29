@@ -25,3 +25,12 @@ const AttackTypes = {
 	SPECIAL_HEAVY = "spHeavy",
 	DASH = "dash"
 }
+
+const AttackIndexes = {
+	"light": 0,
+	"heavy": 1,
+	"special": 2,
+	"spLight": 3,
+	"spHeavy": 4,
+	"dash": 5,
+}
