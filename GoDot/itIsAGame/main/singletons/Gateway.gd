@@ -1,7 +1,7 @@
 extends Node
 
-var network = NetworkedMultiplayerENet.new()
-var gatewayApi = MultiplayerAPI.new()
+var network = ENetMultiplayerPeer.new()
+var gatewayApi = SceneMultiplayer.new()
 var ip = "127.0.0.1"
 var port = 1910
 var cert = load("res://resources/certificate/x509_Certificate.crt")
@@ -14,28 +14,28 @@ func _ready():
 	pass
 	
 func _process(_delta):
-	if get_custom_multiplayer() == null:
+	if multiplayer == null:
 		return
-	if not custom_multiplayer.has_network_peer():
+	if not multiplayer.has_multiplayer_peer():
 		return
-	custom_multiplayer.poll()
+	multiplayer.poll()
 	
 func connect_to_server(_username, _password, _newAccount):
-	network = NetworkedMultiplayerENet.new()
-	gatewayApi = MultiplayerAPI.new()
-	network.set_dtls_enabled(true)
-	network.set_dtls_verify_enabled(false) #set to true when using signed certificate
-	network.set_dtls_certificate(cert)
+	network = ENetMultiplayerPeer.new()
+	gatewayApi = SceneMultiplayer.new()
+	#network.set_dtls_enabled(true)
+	#network.set_dtls_verify_enabled(false) #set to true when using signed certificate
+	#network.set_dtls_certificate(cert)
 	username = _username
 	password = _password
 	newAccount = _newAccount
 	network.create_client(ip, port)
-	set_custom_multiplayer(gatewayApi)
-	custom_multiplayer.set_root_node(self)
-	custom_multiplayer.set_network_peer(network)
+	get_tree().set_multiplayer(gatewayApi, self.get_path())
+	#multiplayer.set_root_node(self)
+	multiplayer.set_multiplayer_peer(network)
 	
-	network.connect("connection_succeeded", self, "_on_connection_succeeded")
-	network.connect("connection_failed", self, "_on_connection_failed")
+	network.connect("connection_succeeded", Callable(self, "_on_connection_succeeded"))
+	network.connect("connection_failed", Callable(self, "_on_connection_failed"))
 
 func _on_connection_succeeded():
 	if newAccount:
@@ -54,7 +54,7 @@ func request_login():
 	username = ""
 	password = ""
 
-remote func return_login_request(results, token):
+@rpc("any_peer") func return_login_request(results, token):
 	print("results received:" + str(results))
 	if results == true:
 		MasterServer.token = token
@@ -72,7 +72,7 @@ func request_create_account():
 	username = ""
 	password = ""
 	
-remote func return_create_account_request(results, message):
+@rpc("any_peer") func return_create_account_request(results, message):
 	print("results received")
 	if results:
 		print("Account created, logging in")
@@ -85,6 +85,6 @@ remote func return_create_account_request(results, message):
 		get_node("../SceneHandler/MainScreen/Background/CreateAccount").SignUp.disabled = false
 		get_node("../SceneHandler/MainScreen/Background/CreateAccount").Cancel.disabled = false
 	
-	network.disconnect("connection_succeeded", self, "_on_connection_succeeded")
-	network.disconnect("connection_failed", self, "_on_connection_failed")
+	network.disconnect("connection_succeeded", Callable(self, "_on_connection_succeeded"))
+	network.disconnect("connection_failed", Callable(self, "_on_connection_failed"))
 		

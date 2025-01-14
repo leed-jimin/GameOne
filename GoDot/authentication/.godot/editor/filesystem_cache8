@@ -1,0 +1,17 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1736818661
+default_env.tres::Environment::8956261208822710736::1736818674::0::1::::<><>::
+export_presets.cfg::TextFile::-1::1632800210::0::1::::<><>::
+icon.png::CompressedTexture2D::3585747766647551684::1629352100::1730665041::1::::<><>::
+::res://data/::1637819301
+game_server_id.json::JSON::-1::1637819301::0::1::::<><>::
+player_id_test.json::JSON::-1::1637819301::0::1::::<><>::
+::res://GUI/::1736818661
+Log.gd::GDScript::-1::1730665017::0::1::::<>Node<>::
+Logger.tscn::PackedScene::1854315066407565293::1736818674::0::1::::<><>::
+::res://main/::1736715379
+Authenticate.gd::GDScript::-1::1736715372::0::1::::<>Node<>::
+Authenticate.tscn::PackedScene::6802898673952736689::1736715379::0::1::::<><>::res://main/Authenticate.gd
+::res://singletons/::1736818661
+Database.gd::GDScript::-1::1730954736::0::1::::<>Node<>::
+GameServers.gd::GDScript::-1::1730954671::0::1::::<>Node<>::

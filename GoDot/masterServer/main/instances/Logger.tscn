@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dtf46pijeggfu"]
+
+[node name="Logger" type="RichTextLabel"]
+offset_right = 1160.0
+offset_bottom = 645.0
+scroll_following = true

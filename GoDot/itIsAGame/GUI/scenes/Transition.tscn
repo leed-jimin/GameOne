@@ -16,11 +16,11 @@ __meta__ = {
 [node name="Panel" type="Panel" parent="."]
 modulate = Color( 0.854902, 0.137255, 0.137255, 1 )
 self_modulate = Color( 0.615686, 0.0941176, 0.0941176, 1 )
-margin_left = -459.328
-margin_top = -171.0
-margin_right = 1625.67
-margin_bottom = 947.0
-custom_styles/panel = SubResource( 1 )
+offset_left = -459.328
+offset_top = -171.0
+offset_right = 1625.67
+offset_bottom = 947.0
+theme_override_styles/panel = SubResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

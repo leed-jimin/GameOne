@@ -1,8 +1,8 @@
-extends KinematicBody
+extends CharacterBody3D
 
-onready var characterModel = $CharacterModel
-onready var animationTree = $CharacterModel/AnimationTree
-onready var animationPlayer = $CharacterModel/AnimationPlayer
+@onready var characterModel = $CharacterModel
+@onready var animationTree = $CharacterModel/AnimationTree
+@onready var animationPlayer = $CharacterModel/AnimationPlayer
 
 const YN = Globals.YN
 
@@ -35,7 +35,10 @@ func move_player(newPosition, rotationVector, movement):
 			animationTree.set_idle()
 		
 	transform.origin = newPosition
-	move_and_slide(Vector3(0, 0, 0), Vector3.UP, true)
+	set_velocity(Vector3(0, 0, 0))
+	set_up_direction(Vector3.UP)
+	set_floor_stop_on_slope_enabled(true)
+	move_and_slide()
 
 func _physics_process(_delta):
 	if actionDict.size() > 0:

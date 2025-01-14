@@ -1,11 +1,11 @@
-extends KinematicBody
+extends CharacterBody3D
 
-onready var characterDetails = $CharacterDetails
-onready var inputBuffer = $InputBuffer
-onready var timer = $Timer
-onready var animationHandler = $AnimationHandler
-onready var animationTree = $CharacterModel/AnimationTree
-onready var characterModel = $CharacterModel
+@onready var characterDetails = $CharacterDetails
+@onready var inputBuffer = $InputBuffer
+@onready var timer = $Timer
+@onready var animationHandler = $AnimationHandler
+@onready var animationTree = $CharacterModel/AnimationTree
+@onready var characterModel = $CharacterModel
 
 const SPEED_WALK = 8
 const SPEED_RUN = SPEED_WALK * 3
@@ -28,7 +28,7 @@ var right
 var up
 var down
 
-var rootMotion = Transform()
+var rootMotion = Transform3D()
 var airDrift = Vector3()
 var yVelo = 0
 var grounded
@@ -126,7 +126,10 @@ func move_and_slide_wrapper():
 		airDrift.x = max(min(airDrift.x + moveVec.x * .3, SPEED_RUN), -SPEED_RUN)
 		airDrift.z = max(min(airDrift.z + moveVec.z * .3, SPEED_RUN), -SPEED_RUN)
 		airDrift.y = yVelo
-		move_and_slide(airDrift, Vector3.UP, true)
+		set_velocity(airDrift)
+		set_up_direction(Vector3.UP)
+		set_floor_stop_on_slope_enabled(true)
+		move_and_slide()
 		return
 		
 	if animationTree.get("parameters/movement/blend_amount") == 1:
@@ -136,7 +139,11 @@ func move_and_slide_wrapper():
 
 	moveVec.y = yVelo
 
-	airDrift = move_and_slide(moveVec, Vector3.UP, true)
+	set_velocity(moveVec)
+	set_up_direction(Vector3.UP)
+	set_floor_stop_on_slope_enabled(true)
+	move_and_slide()
+	airDrift = velocity
 
 func root_motion_move_and_slide(delta):
 	rootMotion = animationTree.get_root_motion_transform()
@@ -146,13 +153,16 @@ func root_motion_move_and_slide(delta):
 	moveVec.z = h_velocity.z
 	moveVec.y = yVelo
 
-	move_and_slide(characterModel.global_transform.basis.xform(moveVec), Vector3.UP, true)
+	set_velocity(characterModel.global_transform.basis * (moveVec))
+	set_up_direction(Vector3.UP)
+	set_floor_stop_on_slope_enabled(true)
+	move_and_slide()
 
 	rootMotion = rootMotion.orthonormalized() # Orthonormalize orientation.
 	moveVec = Vector3()
 
 func define_player_state():
-	playerState = {"T": OS.get_system_time_msecs(), "P": transform.origin, "R": characterModel.rotation_degrees} #could be global transform
+	playerState = {"T": Time.get_ticks_msec(), "P": transform.origin, "R": characterModel.rotation_degrees} #could be global transform
 	if grounded:
 		playerState["M"] = animationTree.get("parameters/movement/blend_amount") # add jump or nah
 	else:

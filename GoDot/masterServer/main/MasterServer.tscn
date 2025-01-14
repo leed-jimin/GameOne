@@ -1,13 +1,13 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://304tmb2tg82t"]
 
-[ext_resource path="res://main/MasterServer.gd" type="Script" id=1]
-[ext_resource path="res://playerContainer/scripts/PlayerVerification.gd" type="Script" id=2]
+[ext_resource type="Script" path="res://main/MasterServer.gd" id="1"]
+[ext_resource type="Script" path="res://playerContainer/scripts/PlayerVerification.gd" id="2"]
 
 [node name="MasterServer" type="Node"]
-script = ExtResource( 1 )
+script = ExtResource("1")
 
 [node name="PlayerVerification" type="Node" parent="."]
-script = ExtResource( 2 )
+script = ExtResource("2")
 
 [node name="VerificationExpiration" type="Timer" parent="PlayerVerification"]
 wait_time = 15.0

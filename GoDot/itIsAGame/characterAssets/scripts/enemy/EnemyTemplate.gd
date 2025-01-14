@@ -1,4 +1,4 @@
-extends KinematicBody
+extends CharacterBody3D
 
 var maxHp
 var currentHp
@@ -32,7 +32,7 @@ func on_hit(damage):
 	MasterServer.npc_hit(int(get_name()), damage)
 	
 func on_death():
-	get_node("CollisionShape").set_deferred("disabled", true)
+	get_node("CollisionShape3D").set_deferred("disabled", true)
 	get_node("rig").hide()
 	#death anim
 	#healthbar hide()

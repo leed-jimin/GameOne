@@ -2,7 +2,7 @@ extends Node
 
 var lobbyDict = {}
 var lobbyCount = 0; # this will have to change so that gameId can be the same
-onready var MasterServer = get_node("/root/MasterServer")
+@onready var MasterServer = get_node("/root/MasterServer")
 const LobbyState = {
 	OPEN = "Open",
 	FULL = "Full",

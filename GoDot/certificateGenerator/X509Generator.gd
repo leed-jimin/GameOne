@@ -3,8 +3,8 @@ extends Node
 const X509CertFilename = "x509_Certificate.crt"
 const X509KeyFilename = "x509_Key.key"
 const directoryPath = "res://certificate/"
-onready var X509CertPath = directoryPath + X509CertFilename
-onready var X509KeyPath = directoryPath + X509KeyFilename
+@onready var X509CertPath = directoryPath + X509CertFilename
+@onready var X509KeyPath = directoryPath + X509KeyFilename
 
 const CN = "GameOne" #domain name
 const O = "DaKneelee" #organization
@@ -13,7 +13,7 @@ const notBefore = "20210424000000"
 const notAfter = "20220424000000"
 
 func _ready():
-	var directory = Directory.new()
+	var directory = DirAccess.new()
 	if not directory.dir_exists(directoryPath):
 		directory.make_dir(directoryPath)
 	create_X509_cert()

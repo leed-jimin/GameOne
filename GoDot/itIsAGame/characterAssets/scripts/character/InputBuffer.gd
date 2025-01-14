@@ -2,7 +2,7 @@ extends Node
 
 class_name InputBuffer
 
-onready var timer = get_node("../Timer")
+@onready var timer = get_node("../Timer")
 var buffer
 const MAX_INPUTS = 5
 

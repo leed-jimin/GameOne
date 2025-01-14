@@ -4,20 +4,21 @@ var PlayerIDs
 var ServerIDs
 
 func _ready():
-	var playerID_file = File.new()
-	playerID_file.open("res://data/player_id_test.json", File.READ)
-	var json = JSON.parse(playerID_file.get_as_text())
+	var playerID_file = FileAccess.open("res://data/player_id_test.json", FileAccess.READ)
+	var test_json_conv = JSON.new()
+	test_json_conv.parse(playerID_file.get_as_text())
+	var json = test_json_conv.get_data()
 	playerID_file.close()
-	PlayerIDs = json.result
+	PlayerIDs = json
 	
-	var serverID_file = File.new()
-	serverID_file.open("res://data/game_server_id.json", File.READ)
-	json = JSON.parse(serverID_file.get_as_text())
+	var serverID_file = FileAccess.open("res://data/game_server_id.json", FileAccess.READ)
+	test_json_conv = JSON.new()
+	test_json_conv.parse(serverID_file.get_as_text())
+	json = test_json_conv.get_data()
 	serverID_file.close()
-	ServerIDs = json.result
+	ServerIDs = json
 
 func SavePlayerIDs():
-	var saveFile = File.new()
-	saveFile.open("res://data/player_id_test.json", File.WRITE)
-	saveFile.store_line(to_json(PlayerIDs))
+	var saveFile = FileAccess.open("res://data/player_id_test.json", FileAccess.WRITE)
+	saveFile.store_line(JSON.stringify(PlayerIDs))
 	saveFile.close()

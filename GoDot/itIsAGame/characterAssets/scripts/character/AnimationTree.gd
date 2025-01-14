@@ -85,8 +85,6 @@ func set_attack(type, elevationState):
 			set_action_ground(ACTION.ATTACK)
 		else:
 			set_action_air(ACTION.ATTACK)
-	#1a. timeout and reset
-	#3. final attack; reset
 	
 func reset_transition_advances(nodeName):
 	var index = 0

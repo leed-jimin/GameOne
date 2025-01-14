@@ -1,0 +1,4 @@
+res://default_env.tres
+res://GUI/Logger.tscn
+res://GUI/Logger.gd
+res://main/Authenticate.tscn

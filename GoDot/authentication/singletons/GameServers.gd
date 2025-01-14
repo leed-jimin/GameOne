@@ -1,7 +1,7 @@
 extends Node
 
-var network = NetworkedMultiplayerENet.new()
-var gatewayApi = MultiplayerAPI.new()
+var network = ENetMultiplayerPeer.new()
+var gatewayApi = SceneMultiplayer.new()
 var port = 1912
 const MAX_PLAYERS = 10
 var gameServerList = []
@@ -11,27 +11,26 @@ func _ready():
 	start_server()
 	
 func _process(_delta):
-	if not custom_multiplayer.has_network_peer():
+	if not multiplayer.has_multiplayer_peer():
 		return
-	custom_multiplayer.poll()
+	multiplayer.poll()
 	
 func start_server():
 	network.create_server(port, MAX_PLAYERS)
-	set_custom_multiplayer(gatewayApi)
-	custom_multiplayer.set_root_node(self)
-	custom_multiplayer.set_network_peer(network)
-	Log.DEBUG("GameServerHub started")
+	get_tree().set_multiplayer(gatewayApi, self.get_path())
+	multiplayer.set_multiplayer_peer(network)
+	Logger.DEBUG("GameServerHub started")
 	
-	network.connect("peer_connected", self, "_peer_connected")
-	network.connect("peer_disconnected", self, "_peer_disconnected")
+	network.connect("peer_connected", Callable(self, "_peer_connected"))
+	network.connect("peer_disconnected", Callable(self, "_peer_disconnected"))
 	
 func _peer_connected(gameServerId):
-	Log.INFO("gameServer connected: " + str(gameServerId))
-	gameServerList.append(gameServerId) 
-	Log.DEBUG(gameServerList)
+	Logger.INFO("gameServer connected: " + str(gameServerId))
+	gameServerList.append(gameServerId)
+	Logger.DEBUG(gameServerList)
 	
 func _peer_disconnected(gameServerId):
-	Log.INFO("gameServer disconnected: " + str(gameServerId))
+	Logger.INFO("gameServer disconnected: " + str(gameServerId))
 	gameServerList.erase(gameServerId)
 
 func distribute_login_token(token, gameServer):

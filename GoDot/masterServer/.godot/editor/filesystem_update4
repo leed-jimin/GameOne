@@ -1,0 +1,6 @@
+res://default_env.tres
+res://main/instances/Logger.gd
+res://main/instances/Logger.tscn
+res://main/MasterServer.tscn
+res://playerContainer/scenes/PlayerContainer.tscn
+res://playerContainer/scenes/characterTemplate.tscn

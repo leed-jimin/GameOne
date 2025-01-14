@@ -1,0 +1,8 @@
+res://default_env.tres
+res://main/GameServer.tscn
+res://main/singletons/Logger.gd
+res://main/singletons/Logger.tscn
+res://main/GameServer.gd
+res://main/singletons/Gateway.gd
+res://main/singletons/MasterServer.gd
+res://main/singletons/StateProcessing.gd

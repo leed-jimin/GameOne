@@ -1,0 +1,16 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1736805502
+default_env.tres::Environment::4554628511960260480::1736805283::0::1::::<><>::
+export_presets.cfg::TextFile::-1::1632800260::0::1::::<><>::
+Gateway.gd::GDScript::-1::1736805282::0::1::::<>Node<>::
+Gateway.tscn::PackedScene::4530126511106025488::1736805282::0::1::::<><>::res://Gateway.gd
+icon.png::CompressedTexture2D::7598591557477761185::1629352100::1730665309::1::::<><>::
+::res://certificate/::1629352100
+x509_Certificate.crt::X509Certificate::-1::1629352100::0::1::::<><>::
+x509_Key.key::CryptoKey::-1::1629352100::0::1::::<><>::
+::res://GUI/::1736805502
+Logger.gd::GDScript::-1::1736716558::0::1::::<>Node<>::
+logger.tscn::PackedScene::3094612483290816944::1736805283::0::1::::<><>::
+::res://singletons/::1736719007
+Authenticate.gd::GDScript::-1::1736715240::0::1::::<>Node<>::
+Log.gd::GDScript::-1::1736719007::0::1::::<>Node<>::

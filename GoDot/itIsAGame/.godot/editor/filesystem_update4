@@ -1,0 +1,6 @@
+res://main/default_env.tres
+res://main/Main.tscn
+res://characterAssets/scenes/CharacterTemplate.tscn
+res://characterAssets/scenes/PlayerBackup.tscn
+res://characterAssets/scenes/Player.tscn
+res://GUI/scenes/LoginScreen.tscn

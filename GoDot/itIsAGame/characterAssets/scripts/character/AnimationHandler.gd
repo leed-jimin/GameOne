@@ -2,10 +2,10 @@ extends Node
 
 class_name AnimationHandler
 
-onready var animationPlayer = get_node("../CharacterModel/AnimationPlayer")
-onready var timer = get_node("../Timer")
-onready var animationTree = get_node("../CharacterModel/AnimationTree")
-onready var inputBuffer = get_node("../InputBuffer")
+@onready var animationPlayer = get_node("../CharacterModel/AnimationPlayer")
+@onready var timer = get_node("../Timer")
+@onready var animationTree = get_node("../CharacterModel/AnimationTree")
+@onready var inputBuffer = get_node("../InputBuffer")
 
 var atkPoints = 0
 var lightWaitTime = .7

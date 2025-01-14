@@ -1,0 +1,8 @@
+res://default_env.tres
+res://Gateway.tscn
+res://GUI/logger.tscn
+res://Gateway.gd
+res://GUI/Logger.tscn
+res://GUI/Logger.gd
+res://singletons/Authenticate.gd
+res://export_presets.cfg

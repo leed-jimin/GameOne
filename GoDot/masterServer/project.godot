@@ -6,20 +6,21 @@
 ;   [section] ; section goes between []
 ;   param=value ; assign values to parameters
 
-config_version=4
+config_version=5
 
 [application]
 
 config/name="MasterServer"
 run/main_scene="res://main/MasterServer.tscn"
+config/features=PackedStringArray("4.3")
 config/icon="res://icon.png"
 
 [autoload]
 
+Logger="*res://main/instances/Logger.gd"
 HubConnection="*res://main/instances/HubConnection.gd"
 LobbyHandler="*res://main/instances/LobbyHandler.gd"
 ServerData="*res://main/instances/ServerData.gd"
-Log="*res://main/instances/Log.gd"
 
 [physics]
 
@@ -27,4 +28,4 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
-environment/default_environment="res://default_env.tres"
+environment/defaults/default_environment="res://default_env.tres"

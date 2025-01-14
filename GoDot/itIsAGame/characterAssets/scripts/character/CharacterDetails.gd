@@ -2,7 +2,7 @@ extends Node
 
 class_name CharacterDetails
 
-onready var animationTree = get_node("../CharacterModel/AnimationTree")
+@onready var animationTree = get_node("../CharacterModel/AnimationTree")
 var attackTypes = Globals.AttackTypes
 
 var actionsDict = {}

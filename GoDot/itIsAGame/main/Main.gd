@@ -1,26 +1,26 @@
 extends Node
 
-onready var loginScreen = load("res://GUI/scenes/LoginScreen.tscn")
-onready var transition = load("res://GUI/scenes/Transition.tscn")
-onready var hub = load("res://GUI/scenes/Hub.tscn")
-onready var lobby = load("res://GUI/scenes/Lobby.tscn")
-onready var sceneHandler = load("res://main//src/SceneHandler.tscn")
+@onready var loginScreen = load("res://GUI/scenes/LoginScreen.tscn")
+@onready var transition = load("res://GUI/scenes/Transition.tscn")
+@onready var hub = load("res://GUI/scenes/Hub.tscn")
+@onready var lobby = load("res://GUI/scenes/Lobby.tscn")
+@onready var sceneHandler = load("res://main//src/SceneHandler.tscn")
 
 func _ready():
-	#load_login_screen()
-	#Gateway.connect_to_server("test1", "test1", false)
-#	GameServer.connect_to_server("127.0.0.1", 1908)
-#	MasterServer.connect_to_server()
-	load_game() #for testing animations
+	load_login_screen()
+	Gateway.connect_to_server("test1", "test1", false)
+	GameServer.connect_to_server("127.0.0.1", 1908)
+	MasterServer.connect_to_server()
+#	load_game() #for testing animations
 
 func load_login_screen():
-	add_child(loginScreen.instance())
+	add_child(loginScreen.instantiate())
 	
 func player_verified():
 	load_hub()
 
 func load_hub():
-	add_child(hub.instance())
+	add_child(hub.instantiate())
 	
 func load_lobby(action):
 	match action:
@@ -28,14 +28,14 @@ func load_lobby(action):
 			pass
 		"Create":
 			pass
-	add_child(lobby.instance())
+	add_child(lobby.instantiate())
 	get_node("Hub").hide()
 	
 func load_game():
-	add_child(sceneHandler.instance())
+	add_child(sceneHandler.instantiate())
 	
 func transition_scenes():
-	add_child(transition.instance())
+	add_child(transition.instantiate())
 	delete_children()
 	
 func delete_children():

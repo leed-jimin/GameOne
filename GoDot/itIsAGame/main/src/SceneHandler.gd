@@ -12,31 +12,31 @@ func _ready():
 	spawn_user_player() # this is for testing animations
 	
 func spawn_user_player():
-	var model = playerScene.instance()
+	var model = playerScene.instantiate()
 	model.transform.origin = Vector3(0, 10, 0)
 	add_child(model)
-	$Camera.set_target(model.get_node("CameraLocation"))
+	$Camera3D.set_target(model.get_node("CameraLocation"))
 
 func spawn_new_player(playerId, spawnPosition):
-	if not get_tree().get_network_unique_id() == playerId:
-		if not get_node("YSort/OtherPlayers").has_node(str(playerId)):
-			var newPlayer = characterTemplate.instance()
+	if not get_tree().get_unique_id() == playerId:
+		if not get_node("Node2D/OtherPlayers").has_node(str(playerId)):
+			var newPlayer = characterTemplate.instantiate()
 			newPlayer.transform.origin = spawnPosition # might not work
 			newPlayer.name = str(playerId)
-			get_node("YSort/OtherPlayers").add_child(newPlayer)
+			get_node("Node2D/OtherPlayers").add_child(newPlayer)
 
 func spawn_new_enemy(enemyId, enemyDict):
-	var newEnemy = characterTemplate.instance()
+	var newEnemy = characterTemplate.instantiate()
 	newEnemy.transform.origin = enemyDict["Location"]
 	newEnemy.currentHp = enemyDict["Health"]
 	newEnemy.type = enemyDict["Type"]
 	newEnemy.state = enemyDict["State"]
 	newEnemy.name = str(enemyId)
-	get_node("YSort/Enemies").add_child(newEnemy, true)
+	get_node("Node2D/Enemies").add_child(newEnemy, true)
 
 func despawn_player(playerId):
-	yield(get_tree().create_timer(0.2), "timeout")
-	get_node("YSort/OtherPlayers/" + str(playerId)).queue_free()
+	await get_tree().create_timer(0.2).timeout
+	get_node("Node2D/OtherPlayers/" + str(playerId)).queue_free()
 
 func update_world_state(worldState):
 	if worldState["T"] > lastWorldState:
@@ -55,13 +55,13 @@ func _physics_process(delta):
 					continue
 				if str(player) == "Enem":
 					continue
-				if player == get_tree().get_network_unique_id():
+				if player == get_tree().get_unique_id():
 					continue
 				if not worldStateBuffer[1].has(player):
 					continue
-				if get_node("YSort/OtherPlayers").has_node(str(player)):
+				if get_node("Node2D/OtherPlayers").has_node(str(player)):
 					var newPosition = lerp(worldStateBuffer[1][player]["P"], worldStateBuffer[2][player]["P"], interpolationFactor)
-					get_node("YSort/OtherPlayers/" + str(player)).move_player(newPosition, worldStateBuffer[2][player]["R"], worldStateBuffer[2][player]["M"])
+					get_node("Node2D/OtherPlayers/" + str(player)).move_player(newPosition, worldStateBuffer[2][player]["R"], worldStateBuffer[2][player]["M"])
 				else:
 					print("spawning player")
 					spawn_new_player(player, worldStateBuffer[2][player]["P"])
@@ -82,12 +82,12 @@ func _physics_process(delta):
 					continue
 				if str(player) == "Enem":
 					continue
-				if player == get_tree().get_network_unique_id():
+				if player == get_tree().get_unique_id():
 					continue
 				if not worldStateBuffer[0].has(player):
 					continue
-				if get_node("YSort/OtherPlayers").has_node(str(player)):
+				if get_node("Node2D/OtherPlayers").has_node(str(player)):
 					var positionDelta = (worldStateBuffer[1][player]["P"] - worldStateBuffer[0][player]["P"])
 					var newPosition = worldStateBuffer[1][player]["P"] + (positionDelta * extrapolationFactor)
 					var rotationVector = worldStateBuffer[1][player]["R"]
-					get_node("YSort/OtherPlayers/" + str(player)).move_player(newPosition, rotationVector)
+					get_node("Node2D/OtherPlayers/" + str(player)).move_player(newPosition, rotationVector)

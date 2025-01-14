@@ -1,10 +1,10 @@
 extends Node
 
-var network = NetworkedMultiplayerENet.new()
-var gatewayApi = MultiplayerAPI.new()
+var network = ENetMultiplayerPeer.new()
+var gatewayApi = SceneMultiplayer.new()
 var port = 1910
 const MAX_PLAYERS = 100
-
+var test = 0
 var cert = load("res://certificate/x509_Certificate.crt")
 var key = load("res://certificate/x509_Key.key")
 
@@ -12,32 +12,32 @@ func _ready():
 	start_server()
 	
 func _process(delta):
-	if not custom_multiplayer.has_network_peer():
+	if not multiplayer.has_multiplayer_peer():
 		return
-	custom_multiplayer.poll()
+	multiplayer.poll()
 	
 func start_server():
-	network.set_dtls_enabled(true)
-	network.set_dtls_key(key)
-	network.set_dtls_certificate(cert)
+	#network.set_dtls_enabled(true)
+	#network.set_dtls_key(key)
+	#network.set_dtls_certificate(cert)
 	network.create_server(port, MAX_PLAYERS)
-	set_custom_multiplayer(gatewayApi)
-	custom_multiplayer.set_root_node(self)
-	custom_multiplayer.set_network_peer(network)
-	Log.DEBUG("gateway server started!")
+	get_tree().set_multiplayer(gatewayApi, self.get_path())
+	multiplayer.set_multiplayer_peer(network)
+	print("gateway server started!")
 	
-	network.connect("peer_connected", self, "_on_peer_connected")
-	network.connect("peer_disconnected", self, "_on_peer_disconnected")
+	network.connect("peer_connected", Callable(self, "_on_peer_connected"))
+	network.connect("peer_disconnected", Callable(self, "_on_peer_disconnected"))
 	
 func _on_peer_connected(playerId):
-	Log.INFO("peer connected: " + str(playerId))
+	Logger.INFO("peer connected: " + str(playerId))
 	
 func _on_peer_disconnected(playerId):
-	Log.INFO("peer disconnected: " + str(playerId))
+	Logger.INFO("peer disconnected: " + str(playerId))
 	
-remote func login_request(username, password, isServer = false):
-	Log.INFO("login request recieved")
-	var playerId = custom_multiplayer.get_rpc_sender_id()
+@rpc("any_peer")
+func login_request(username, password, isServer = false):
+	Logger.INFO("login request recieved")
+	var playerId = multiplayer.get_remote_sender_id()
 	if isServer:
 		Authenticate.authenticate_server(username, password, playerId)
 	else:
@@ -47,15 +47,16 @@ func return_login_request(result, playerId, token):
 	rpc_id(playerId, "return_login_request", result, token)
 	network.disconnect_peer(playerId)
 
-remote func create_account_request(username, password):
-	Log.DEBUG("create account request received")
-	var playerId = custom_multiplayer.get_rpc_sender_id()
+@rpc("any_peer")
+func create_account_request(username, password):
+	Logger.DEBUG("create account request received")
+	var playerId = multiplayer.get_remote_sender_id()
 	var valid = true
 	if username == null:
-		Log.ERROR("Please provide a valid username.")
+		Logger.ERROR("Please provide a valid username.")
 		valid = false
 	if password == null:
-		Log.ERROR("Please provide a valid password.")
+		Logger.ERROR("Please provide a valid password.")
 		valid = false
 	#need extra handling
 	if valid:

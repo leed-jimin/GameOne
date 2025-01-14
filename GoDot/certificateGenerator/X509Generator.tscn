@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://dht44tbxpx13e"]
 
-[ext_resource path="res://X509Generator.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://X509Generator.gd" id="1"]
 
 [node name="X509Generator" type="Node"]
-script = ExtResource( 1 )
+script = ExtResource("1")

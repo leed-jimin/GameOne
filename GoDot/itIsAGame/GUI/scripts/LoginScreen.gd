@@ -1,19 +1,19 @@
 extends Control
 
 #UI States
-onready var loginScreen = get_node("Background/Login")
-onready var createAccountScreen = get_node("Background/CreateAccount")
+@onready var loginScreen = get_node("Background/Login")
+@onready var createAccountScreen = get_node("Background/CreateAccount")
 #Login screen
-onready var usernameLogin = get_node("Background/Login/UsernameEdit")
-onready var passwordLogin = get_node("Background/Login/PasswordEdit")
-onready var loginButton = get_node("Background/Login/LoginButton")
-onready var createAccountButton = get_node("Background/Login/CreateAccount")
+@onready var usernameLogin = get_node("Background/Login/UsernameEdit")
+@onready var passwordLogin = get_node("Background/Login/PasswordEdit")
+@onready var loginButton = get_node("Background/Login/LoginButton")
+@onready var createAccountButton = get_node("Background/Login/CreateAccount")
 #Create Account
-onready var usernameCreate= get_node("Background/CreateAccount/UsernameEdit")
-onready var passwordCreate = get_node("Background/CreateAccount/PasswordEdit")
-onready var confirmPasswordCreate = get_node("Background/CreateAccount/ConfirmPasswordEdit")
-onready var signUpButton = get_node("Background/CreateAccount/SignUp")
-onready var cancelButton = get_node("Background/CreateAccount/Cancel")
+@onready var usernameCreate= get_node("Background/CreateAccount/UsernameEdit")
+@onready var passwordCreate = get_node("Background/CreateAccount/PasswordEdit")
+@onready var confirmPasswordCreate = get_node("Background/CreateAccount/ConfirmPasswordEdit")
+@onready var signUpButton = get_node("Background/CreateAccount/SignUp")
+@onready var cancelButton = get_node("Background/CreateAccount/Cancel")
 
 func _ready():
 	pass
